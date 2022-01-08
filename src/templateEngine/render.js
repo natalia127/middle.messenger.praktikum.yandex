@@ -16,7 +16,6 @@ function afterCompile() {
   const forms = document.getElementsByTagName('form');
   Array.from(forms).forEach(form =>
     form.addEventListener('submit', (e)=>{
-      console.log('s');
       e.preventDefault()})  
   )
 }
