@@ -1,0 +1,7 @@
+export const SIGNIN = '/sign-in'
+export const SIGNUP = '/sign-up'
+export const PROFILE = '/my-profile'
+export const EDIT_PROFILE = '/edit-profile'
+export const EDIT_PASSWORD = '/edit-password'
+export const CHAT = '/'
+export const PAGE500 = '/500'

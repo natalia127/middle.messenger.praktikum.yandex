@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500&display=swap');
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+$cols: 12;
+$gutter: 30px;
+$gutter-col: calc($gutter / 2);
+$adaptive-breakpoints: (
+  'sm': 576px,
+  'md': 768px,
+  'lg': 992px,
+  'xl': 1200px,
+);
+
+.fullContainer {
+  height: 100%;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: $gutter-col;
+  margin-left: $gutter-col;
+}
+
+.col,
+[class^='col-'] {
+  position: relative;
+  width: 100%;
+  padding-right: $gutter-col;
+  padding-left: $gutter-col;
+}
+
+@each $size in map-keys($adaptive-breakpoints) {
+  @media (min-width: map_get($adaptive-breakpoints, $size)) {
+    @for $i from 1 through $cols {
+      .col-#{$size}-#{$i} {
+        flex: 0 0 calc(($i / $cols)*100% - $gutter);
+        max-width: calc(($i / $cols)*100%);
+      }
+    }
+  }
+}
+
+.wrapperCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%
+}
+
+.baseLink {
+
+}
+
+body {
+  font-family: 'Alegreya', serif;
+}

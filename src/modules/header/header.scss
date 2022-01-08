@@ -1,0 +1,24 @@
+
+.header {
+  background-color: $aque;
+  ;
+  padding: 1.2rem;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+
+}
+.linkProfile {
+  font-size: 1.3rem;
+  padding: 0.4em 2em;
+  background-color: $light-aque;
+  border-radius: 2em;
+  a {
+    color: $base-color;
+
+    &:active {
+      color: $link-active-color;
+    }
+  }
+
+}
