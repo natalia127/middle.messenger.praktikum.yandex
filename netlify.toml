@@ -8,3 +8,6 @@
 [build]
   publish = "dist"
   command = "npm run build"
+[[redirects]]
+  to = "/pagehtml/500.html"
+  status = 500
