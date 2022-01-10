@@ -11,6 +11,7 @@ import Auth from '../pages/auth/auth.tmpl'
 export function getComponentTmpl () {
   let path = location.pathname
   let componentTmpl
+  console.log(path);
   switch (path) {
     case PROFILE:
       componentTmpl = MyProfile      
