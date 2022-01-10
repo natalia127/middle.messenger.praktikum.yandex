@@ -7,9 +7,8 @@ const context = {
 
 
 const blockTemplate = function() {
-
-return `<button class="{{class}} button" >{{value}}</button>`
-}
+    return `<button class="{{class}} button" >{{value}}</button>`;
+};
 const component = new Component(context, blockTemplate)
 
 export  default component
