@@ -13,7 +13,6 @@ export function getComponentTmpl () {
   if (path !== CHAT && !path.endsWith('.html')) {
     path += '.html'
   }
-  console.log(path, PROFILE);
   let componentTmpl
   switch (path) {
     case PROFILE:
