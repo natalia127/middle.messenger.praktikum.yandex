@@ -1,4 +1,5 @@
 import Avatar from '../../components/avatar/avatar.tmpl'
+import {SIGNIN, EDIT_PROFILE, EDIT_PASSWORD } from '../../router/namePath'
 
 import { context } from './tempContext';
 
@@ -42,9 +43,9 @@ const blockTemplate = function() {
       </div>
       
       <div class="profile__actions">
-        <div class="profile__action profile__edit"><a href="./edit-profile">Изменить данные</a></div>
-        <div class="profile__action profile__edit" ><a href="./edit-password">Изменить пароль</a></div>
-        <div class="profile__action profile__exit"><a href="./sign-in">Выйти</a></div>
+        <div class="profile__action profile__edit"><a href="${EDIT_PROFILE}">Изменить данные</a></div>
+        <div class="profile__action profile__edit" ><a href="${EDIT_PASSWORD}">Изменить пароль</a></div>
+        <div class="profile__action profile__exit"><a href="${SIGNIN}">Выйти</a></div>
       </div>
     </div>
     

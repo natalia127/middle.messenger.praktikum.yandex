@@ -1,5 +1,6 @@
 import Button from '../../components/button/button.tmpl'
 import Input from '../../components/input/input.tmpl'
+import { CHAT } from '../../router/namePath'
 
 
 const context = {
@@ -64,7 +65,7 @@ const tmplSignIn =  `
     %}
       {% Button 
         context: {
-          value: '<a href="./">Зарегестрироваться</a>',
+          value: '<a href="${CHAT}">Зарегестрироваться</a>',
           class: 'form__button'
         }
       %}

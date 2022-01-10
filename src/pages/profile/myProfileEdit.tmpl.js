@@ -1,6 +1,7 @@
 import Input from '../../components/input/input.tmpl'
 import Button from '../../components/button/button.tmpl'
 import { context } from './tempContext';
+import { CHAT } from '../../router/namePath'
 
 
 const blockTemplate = function() {
@@ -88,7 +89,7 @@ const blockTemplate = function() {
       </div>
       
       <div class="profile__actions profile__actions--center">
-        <a href="./">
+        <a href="${CHAT}">
           {% Button 
             context: {
               value: 'Сохранить',

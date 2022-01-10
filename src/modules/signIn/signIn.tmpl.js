@@ -1,5 +1,6 @@
 import Button from '../../components/button/button.tmpl'
 import Input from '../../components/input/input.tmpl'
+import {SIGNUP, CHAT } from '../../router/namePath'
 
 
 const context = {
@@ -32,22 +33,20 @@ const tmplSignIn =  `
       }
     %}
 
-      <a href="./">
+     
         {% Button 
           context: {
-            value: 'Войти',
+            value: '<a href="${CHAT}">Войти</a>',
             class: 'form__button'
           }
         %}
-      </a>
+
  
-      <div class="form__text"><a href="./sign-up">signUp</a></div>
+      <div class="form__text"><a href="${SIGNUP}">signUp</a></div>
     </div>
   </form>
   </div>
 `
-
-
 const blockTemplate = function() {
   return `${tmplSignIn}`;
 }

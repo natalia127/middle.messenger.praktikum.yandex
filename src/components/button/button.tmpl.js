@@ -2,16 +2,13 @@ import { Component } from "../utils";
 
 const context = {
   value: '',
-  class: ' ',
-  handler: function(){
-    return false
-  }
+  class: ' '
 };
 
 
 const blockTemplate = function() {
 
-return `<button class="{{class}} button" onClick="{{handler}}">{{value}}</button>`
+return `<button class="{{class}} button" >{{value}}</button>`
 }
 const component = new Component(context, blockTemplate)
 

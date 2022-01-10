@@ -1,13 +1,22 @@
-const context = {
+import {PROFILE, CHAT, authorizedPaths} from '../../router/namePath'
 
+const context = {
+  isAuthorizedPaths: authorizedPaths.includes(location.pathname)  
 };
 
-const header = `<div class='header'>
-  <div class="container">
-    <span class="linkProfile"><a href="./my-profile">Мой профиль</a></span>
+const personIcon = new URL('../../img/person.svg', import.meta.url);
+const chatIcon = new URL('../../img/chat.svg', import.meta.url);
+let icon = location.pathname === CHAT ? personIcon : chatIcon
+let href = location.pathname === CHAT ? PROFILE : CHAT
+const header = `{% if isAuthorizedPaths %}
+  <div class='header'>
+    <div class="container">      
+        <span class="linkProfile">      
+            <a href="${href}"><img src="${icon.href}" alt=" " /></a>
+        </span>
+    </div>
   </div>
-
-</div>
+{% endif %}
 `
 
 const blockTemplate = function() {
