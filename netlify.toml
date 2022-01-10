@@ -9,5 +9,5 @@
   publish = "dist"
   command = "npm run build"
 [[redirects]]
-  to = "/pagehtml/500.html"
+  to = "/pagehtml/500"
   status = 500
