@@ -1,5 +1,7 @@
 https://laughing-snyder-d3215b.netlify.app/ - сайт на netlify
 
+https://www.figma.com/file/Sx4KbB1vRZtBblFGB0iT0z/chat-yandex?node-id=0%3A1 - прототипы макетов
+
 npm run start для запуска node сервера на порту 3000
 npm run build для сборки
 npm run dev для разработки
