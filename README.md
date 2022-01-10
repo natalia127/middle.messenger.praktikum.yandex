@@ -1,3 +1,5 @@
+https://laughing-snyder-d3215b.netlify.app/ - сайт на netlify
+
 npm run start для запуска node сервера на порту 3000
 npm run build для сборки
 npm run dev для разработки
@@ -51,3 +53,6 @@ npm run dev для разработки
       {% else %}"
        <div > Другой блок</div>
       {% endif %}"
+
+
+папку pageHtml - сделала для демо в netlify. с введением полноценного роутинга будет удалена
