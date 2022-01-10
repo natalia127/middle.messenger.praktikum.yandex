@@ -38,4 +38,16 @@ npm run dev для разработки
     значения без ковычек возьмутся из контекста родителя. в данном случае - это value: email,
 
 
-    
+    в шаблоназаторе реализовна блок if else
+    пример
+      "{% if isChange %}
+        <div class="avatar__edit"></div>
+      {% endif %}"
+
+    isChange - поле из контекста
+
+      "{% if isChange %}
+        <div class="avatar__edit"></div>
+      {% else %}"
+       <div > Другой блок</div>
+      {% endif %}"
