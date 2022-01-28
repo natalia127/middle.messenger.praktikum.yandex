@@ -5,6 +5,7 @@
     "noUnusedParameters": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "target": "es2020"
+    "target": "es2020",
+    "isolatedModules": false,
  }
 } 
