@@ -86,15 +86,12 @@ export const validate = function (type: string, value: string): resultValid {
   return result;
 };
 const isValidInput = function (e:Event | null, el: HTMLInputElement) {
-  if (el.tagName !== 'INPUT') {
-    return;
-  }
   const validResult: resultValid = validate(el.name, el.value);
 
   return validResult;
 };
 
-const toggleErrorOnInput = function (el, isValid) {
+const toggleErrorOnInput = function (el: HTMLElement, isValid: boolean) {
   if (!isValid) {
     if (!el.classList.contains('error')) {
       el.classList.add('error');
@@ -105,18 +102,15 @@ const toggleErrorOnInput = function (el, isValid) {
 };
 
 export const validateInput = function (e:Event | null, el: HTMLInputElement) {
-  if (!el && e) {
-    el = e.target;
+  const _el = !el && e ? e.target : el;
+  if (_el && _el.tagName === 'INPUT') {
+    let validResult = isValidInput(e, _el as HTMLInputElement);
+
+    toggleErrorOnInput(_el as HTMLInputElement, (validResult?.isValid || true));
   }
-
-  let validResult = isValidInput(e, el);
-
-  toggleErrorOnInput(el, validResult?.isValid);
 };
 
-export const validateForm = function (e: Event, callback) {
-  console.log(e);
-
+export const validateForm = function (e: Event, callback: Function) {
   e.preventDefault();
 
   let values: {[key: string]: string}[] = [];
@@ -127,7 +121,7 @@ export const validateForm = function (e: Event, callback) {
       let validResult = isValidInput(e, el);
       isFormValid = isFormValid && !!validResult?.isValid;
 
-      toggleErrorOnInput(el, validResult?.isValid);
+      toggleErrorOnInput(el, (validResult?.isValid || true));
     }
   });
 
