@@ -1,12 +1,12 @@
-const express = require("express");
+const express = require('express');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || PORT;
 
-app.use(express.static("./dist"));
+app.use(express.static('./dist'));
 
-app.get("/*", (req, res) => {
-  res.sendFile("index.html", { root: "./dist" });
+app.get('/*', (req, res) => {
+  res.sendFile('index.html', { root: './dist' });
 });
 
 app.listen(PORT, function () {
