@@ -1,11 +1,12 @@
 import { Templator } from './templateEngine/Templator';
+import { v4 as makeUUID } from 'uuid';
 import { EventBus } from './EventBus';
 import {
   eventsType, propsObject, childrenType, allPossibleProps, IBlock,
   propsAndChildren as propsAndChildrenType, eventsInnerType,
   listChildren
 } from './typeBlock';
-import { isEmptyObject, getRandomInt } from '../utils/mydash';
+import { isEmptyObject } from '../utils/mydash';
 
 enum EVENTS {
   INIT = 'init',
@@ -43,7 +44,7 @@ export abstract class Block implements IBlock {
     this.props = this.makePropsProxy(props);
     this.arrayProps = arrayProps;
     this.registerEvents();
-    this.id = `t${getRandomInt()}`;
+    this.id = `t${makeUUID()}`;
     this.eventBus.emit(EVENTS.INIT);
   }
 
