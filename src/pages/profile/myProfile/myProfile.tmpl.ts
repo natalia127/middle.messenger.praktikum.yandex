@@ -1,4 +1,4 @@
-import { SIGNIN, EDIT_PROFILE, EDIT_PASSWORD } from '../../../router/namePath';
+import { SIGNIN, EDIT_PROFILE, EDIT_PASSWORD } from '../../../core/router/namePath';
 export const template: string = `<div class="col-lg-12 wrapper-center">
     <div class="profile">
       {% avatar %}

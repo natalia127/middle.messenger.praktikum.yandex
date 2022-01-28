@@ -1,11 +1,12 @@
+import { ctxType } from './typeTemplator';
 import {
   attribute, infoTag, fullInfoTag, settingsNode, settingsTextNode
 } from './typeTemplator';
 
-export function getPropertyCtx(obj: unknown, path, defaultValue: unknown = ''): unknown {
+export function getPropertyCtx(obj: ctxType, path: string, defaultValue: unknown = ''): unknown {
   const keys = path.split('.');
 
-  let result: unknown = obj;
+  let result = obj;
   keys.forEach((key)=> {
     result = result[key];
   });
@@ -20,7 +21,7 @@ export function getAttributesTag(rawStr: string): attribute[] {
   let _rawStr = rawStr;
   const regFullAtrribute: RegExp = /(.+?)=\s*("|')(.+?)("|')/gi;
   const attributes = [];
-  let key: RegExpExecArray = regFullAtrribute.exec(_rawStr);
+  let key = regFullAtrribute.exec(_rawStr);
   while (key) {
     attributes.push({
       fullStr: key[0],
@@ -41,26 +42,19 @@ export function getAttributesTag(rawStr: string): attribute[] {
     })
   );
 
-  /* eslint no-param-reassign: ["error",
-    { "props": true, "ignorePropertyModificationsFor": ["att"] }]
-  */
-  attributes.forEach(att => {
-    delete att.fullStr;
-  });
-
-  return attributes;
+  return attributes.map(att => ({ key: att.key as string, value: att.value as string }));
 }
 
 export function getNameTag(rawStr: string): string {
   const regNameTag: RegExp = /^(\w+)\s/;
-  const resReg: RegExpMatchArray = rawStr.match(regNameTag);
+  const resReg = rawStr.match(regNameTag);
   const nameTag: string = resReg ? resReg[1] : rawStr;
   return nameTag;
 }
 
 export function parseInfoTag(initialStr: string): infoTag {
   const result: infoTag = {
-    name: null,
+    name: '',
     attributes: []
   };
   let rawStr: string = initialStr.trim();
@@ -73,7 +67,7 @@ export function parseInfoTag(initialStr: string): infoTag {
   return result;
 }
 
-export function getInfoSingleTag(tag): fullInfoTag {
+export function getInfoSingleTag(tag: RegExpMatchArray): fullInfoTag {
   const { name, attributes }: infoTag = parseInfoTag(tag[1]);
   const result: fullInfoTag = {
     name,
@@ -84,24 +78,26 @@ export function getInfoSingleTag(tag): fullInfoTag {
   return result;
 }
 
-export function getInfoFullTag(tag, rawStr: string): fullInfoTag {
+export function getInfoFullTag(tag: RegExpMatchArray, rawStr: string): fullInfoTag {
   const { name, attributes }: infoTag = parseInfoTag(tag[1]);
   const regCurrentClosingTag: RegExp = new RegExp(`</${name}\\s*>`, 'g');
   const regCurrentOpeningTag: RegExp = new RegExp(`<${name}.*?\\s*>`, 'g');
   regCurrentOpeningTag.lastIndex = tag[0].length;
   let indexEndInTmpl: number = 0;
-  let closingTag: RegExpExecArray = null;
+  let closingTag = null;
   let isEndTagFound: boolean = false;
   let content: string = '';
   while (!isEndTagFound) {
-    const alsoOpeningTag: RegExpExecArray = regCurrentOpeningTag.exec(rawStr);
+    const alsoOpeningTag = regCurrentOpeningTag.exec(rawStr);
     closingTag = regCurrentClosingTag.exec(rawStr);
-    if (!alsoOpeningTag || alsoOpeningTag.index > closingTag.index) {
+    if (!alsoOpeningTag || (closingTag && alsoOpeningTag.index > closingTag.index)) {
       isEndTagFound = true;
       indexEndInTmpl = regCurrentClosingTag.lastIndex;
     }
   }
-  content = rawStr.slice(tag[0].length, closingTag.index);
+  if (closingTag) {
+    content = rawStr.slice(tag[0].length, closingTag.index);
+  }
   return {
     name,
     attributes,
@@ -121,13 +117,14 @@ export function setAttributes(el: HTMLElement, attributes: attribute[]) {
   }));
 }
 
-export function getTag(rawStr: string): fullInfoTag {
+export function getTag(rawStr: string): fullInfoTag | null {
   const regSingleTag: RegExp = /<(.[^>]+?)\/>{1}?/;
   const regOpeningTag: RegExp = /<(.+?)>/;
 
-  const singleTag: RegExpMatchArray = rawStr.match(regSingleTag);
-  const openingTag: RegExpMatchArray = rawStr.match(regOpeningTag);
-  let result: fullInfoTag = null;
+  const singleTag: RegExpMatchArray | null = rawStr.match(regSingleTag);
+  const openingTag: RegExpMatchArray | null = rawStr.match(regOpeningTag);
+  let result: fullInfoTag | null = null;
+
   if (singleTag && singleTag.index === 0) {
     result = getInfoSingleTag(singleTag);
   } else if (openingTag && openingTag.index === 0) {
@@ -138,17 +135,18 @@ export function getTag(rawStr: string): fullInfoTag {
 
 export function getText(tmpl: string): string {
   const reqSearchText: RegExp = /[^<]+/;
-  const text: RegExpMatchArray = tmpl.match(reqSearchText);
+  const text = tmpl.match(reqSearchText);
   return text ? text[0] : '';
 }
 
-export function getSettingsNode(tmpl): settingsNode | settingsTextNode {
-  const tag: fullInfoTag = getTag(tmpl);
-  let _settingsNode: settingsNode | settingsTextNode = null;
+export function getSettingsNode(tmpl: string): settingsNode | settingsTextNode {
+  const tag = getTag(tmpl);
+  let _settingsNode: settingsNode | settingsTextNode;
   if (tag) {
     _settingsNode = {
       ...tag,
-      typeEl: 'el'
+      typeEl: 'el',
+      el: null
     };
 
     if (tag.typeTag === 'singleTag') {

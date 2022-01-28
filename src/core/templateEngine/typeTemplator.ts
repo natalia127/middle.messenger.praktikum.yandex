@@ -1,10 +1,13 @@
+export type ctxType = {[key: string]: boolean | number | string| null| undefined }
+
 export type attribute = {
   value: string,
   key: string
 };
 
 export type infoTag = {
-  name: null | string,
+  // eslint-disable-next-line no-undef
+  name: string,
   attributes: attribute[]
 };
 
@@ -16,7 +19,7 @@ export type fullInfoTag = infoTag & {
 
 export type settingsNode = fullInfoTag & {
   typeEl: 'el',
-  el: HTMLElement,
+  el: HTMLElement | null,
 };
 export type settingsTextNode = {
   typeEl: 'text',
@@ -26,7 +29,6 @@ export type settingsTextNode = {
 
 export type TemplatorStruct = {
   template: string,
-  context: object,
+  context: ctxType,
   children: TemplatorStruct,
-  setContext?: Function
 }

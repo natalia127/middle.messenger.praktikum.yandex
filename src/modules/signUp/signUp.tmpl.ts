@@ -1,5 +1,5 @@
 export const tmplSignUp = `
-<div >
+
   <form class="form" >
     <div class="form__title"> {{value}}</div>
     <div class="form__inputs">
@@ -13,5 +13,5 @@ export const tmplSignUp = `
 
     </div>
   </form>
-  </div>
+
 `;

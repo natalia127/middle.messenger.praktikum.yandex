@@ -13,6 +13,6 @@ export class Button extends Block {
 
   render() {
     return `
-    <button class="{{class}} button" >{{value}}</button>`;
+     <button class="{{class}} button" >{{value}}</button>`;
   }
 }

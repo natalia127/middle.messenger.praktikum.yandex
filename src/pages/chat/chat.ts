@@ -1,20 +1,36 @@
 import listChat from '../../modules/listChat/listChat';
-import profileChat from '../../modules/profileChat/profileChat.tmpl';
+import profileChat from '../../modules/profileChat/profileChat';
 import settingsChat from '../../modules/settingsChat/settingsChat';
 import screenChat from '../../modules/screenChat/screenChat';
 import { Block } from '../../core/Block';
 import { propsAndChildren } from '../../core/typeBlock';
 
+const iSetting = new URL('../../img/cog-outline.svg', import.meta.url);
+const iProfileChat = new URL('../../img/account-group.svg', import.meta.url);
 class Chat extends Block {
   constructor(props: propsAndChildren) {
     super(props);
   }
 
   render(): string {
-    const chat: string = `<div class="row fullContainer">
-      <div class="col-lg-3">{% listChat %}</div>
-      <div class="col-lg-6 fullContainer">{% screenChat %}</div>
-      <div class="col-lg-3">{% settingsChat %}</div>
+    const chat: string = `<div class="chat row fullContainer">
+
+      <div class="chat__listChat">{% listChat %}</div>
+      <div class="fullContainer chat__screen">{% screenChat %}</div>
+      <div class="chat__profileChat">
+      <div class="js-icon chat__iSetting {{classIcon}}">
+        {% if isProfileChat %}
+          <img src="{{ iSetting }}" alt=" " />
+        {% else %}
+          <img src="{{ iProfileChat }}" alt=" " />
+        {% endif %}
+      </div>
+      {% if isProfileChat %}
+        {% profileChat %}
+      {% else %}
+        {% settingsChat %}
+      {% endif %}
+      </div>
      </div>
    `;
     return chat;
@@ -23,5 +39,18 @@ class Chat extends Block {
 export default ()=> (new Chat({
   listChat: listChat(),
   screenChat: screenChat(),
-  settingsChat: settingsChat()
+  profileChat: profileChat(),
+  settingsChat: settingsChat(),
+  iSetting: iSetting.href,
+  iProfileChat: iProfileChat.href,
+  classIcon: ' ',
+  isProfileChat: true,
+  innerEvents: [{
+    selector: '.js-icon',
+    click: function () {
+      let isProfileChat = !this.props.isProfileChat;
+
+      this.setProps({ isProfileChat });
+    }
+  }]
 }));

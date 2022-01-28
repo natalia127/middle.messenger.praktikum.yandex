@@ -2,7 +2,7 @@ import header from '../modules/header/header';
 import { Block } from '../core/Block';
 import { propsAndChildren } from '../core/typeBlock';
 
-import { getComponentTmpl } from '../router/routing';
+import { getComponentTmpl } from '../core/router/routing';
 
 let main = getComponentTmpl();
 

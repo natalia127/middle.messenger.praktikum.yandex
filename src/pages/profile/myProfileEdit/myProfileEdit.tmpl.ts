@@ -1,6 +1,6 @@
-import { CHAT } from '../../../router/namePath';
+import { CHAT } from '../../../core/router/namePath';
 
-export const template: string = `<div class="col-lg-12 wrapper-center">
+export const template: string = `<form class="col-lg-12 wrapper-center">
     <div class="profile">
       <div class="profile__img"></div>
       <div class="profile__titleName">{{ first_name }}</div>
@@ -46,5 +46,5 @@ export const template: string = `<div class="col-lg-12 wrapper-center">
       </div>
     </div>
     
-  </div>
+  </form>
   `;

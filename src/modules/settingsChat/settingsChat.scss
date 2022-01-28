@@ -1,9 +1,9 @@
 .settingsChat {
   position: relative;
-  padding: 7em 0 2em; 
   display: flex;
   flex-direction: column;
   height: 100%;
+
   &__iconSettings {
     position: absolute;
     width: 2em;
@@ -30,6 +30,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
   }
   &__imgChat {
     width: 3em;

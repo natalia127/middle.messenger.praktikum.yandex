@@ -1,4 +1,4 @@
-import { Avatar } from '../../../components/avatar/avatar.tmpl';
+import { Avatar } from '../../../components/avatar/avatar';
 import { template } from './myProfile.tmpl';
 import { Block } from '../../../core/Block';
 import { propsAndChildren } from '../../../core/typeBlock';
@@ -20,7 +20,8 @@ export default () => {
     ...context,
     avatar: new Avatar({
       size: '5em',
-      class: 'profile__avatar'
+      class: 'profile__avatar',
+      isChange: true
     })
 
   });

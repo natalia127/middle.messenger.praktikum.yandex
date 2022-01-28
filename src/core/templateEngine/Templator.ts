@@ -2,101 +2,51 @@
 
 import { getPropertyCtx, getSettingsNode, setAttributes } from './utilsTemplator';
 import {
-  settingsNode, settingsTextNode, TemplatorStruct
+  settingsNode, settingsTextNode, TemplatorStruct,
+  ctxType
 } from './typeTemplator';
 
-export class Templator<T> {
+export class Templator {
   TEMPLATE_REGEXP = /\{\{([^}}].*?)\}\}/gi;
 
   private readonly _rawTemplate: string;
 
-  private ctx: T;
-
-  private children: TemplatorStruct;
+  private ctx: ctxType;
 
   private stackTreeEl: Array<settingsTextNode | settingsNode>;
 
-  constructor(component) {
+  constructor(component: TemplatorStruct) {
     this._rawTemplate = component.template;
     this.ctx = component.context;
     this.stackTreeEl = [];
-    this.children = component.children;
   }
 
   compile(): HTMLElement {
     const tmpl: string = this.compileRawTmpl().replace(/\n/g, '');
-    return this._getDomEl(tmpl);
+    let result = this.getDomEl(tmpl);
+
+    return result || document.createElement('div');
   }
 
   compileRawTmpl(): string {
-    let tmpl: string = this._replaceOnCtxValue();
-    tmpl = this._insertChildren(tmpl);
+    let tmpl: string = this.replaceOnCtxValue();
+    tmpl = this.insertChildren(tmpl);
     return tmpl;
   }
 
-  // _insertChildren(tmpl: string): string {
-  //   if (!this.children) return tmpl;
-  //   let _tmpl: string = tmpl;
-  //   const regChildrenComponent: RegExp = /{%((\s*(\w+)\s*(context:\s*{(.*?)}\s*)?)+?)%}/gis;
-
-  //   let key: RegExpExecArray = regChildrenComponent.exec(_tmpl);
-
-  //   while (key) {
-  //     const nameComponent: string = key[3];
-  //     const rawContext: string = key[5];
-  //     const childrenComponent: TemplatorStruct = this.children[nameComponent.trim()];
-  //     if (childrenComponent) {
-  //       if (rawContext) {
-  //         this._setContextChildren(childrenComponent, rawContext);
-  //       }
-  //       const templator: Templator<T> = new Templator(childrenComponent);
-  //       let tmplChildren: string = templator.compileRawTmpl();
-  //       _tmpl = _tmpl.replace(key[0], tmplChildren);
-  //       regChildrenComponent.lastIndex = tmplChildren.length - key[0].length;
-  //     }
-
-  //     key = regChildrenComponent.exec(_tmpl);
-  //   }
-  //   return _tmpl;
-  // }
-
-  // _setContextChildren(children: TemplatorStruct, rawContext: string) {
-  //   const regPropertyCtx: RegExp = /(\w+)\s*:\s(('|")(.+)('|")|.[^\s'",]+)/g;
-  //   let key: RegExpExecArray = regPropertyCtx.exec(rawContext);
-  //   while (key) {
-  //     const keyCtx: string = key[1];
-  //     let valueCtx: string = key[4];
-
-  //     if (!valueCtx) {
-  //       valueCtx = this.ctx[key[2]];
-  //     }
-  //     children.setContext({
-  //       [keyCtx]: valueCtx
-  //     });
-  //     key = regPropertyCtx.exec(rawContext);
-  //   }
-  // }
-
-  _replaceOnCtxValue() {
-    const ctx: T = this.ctx;
-    let tmpl: string = this._replaceBlockIfElse();
+  private replaceOnCtxValue() {
+    const ctx: ctxType = this.ctx;
+    let tmpl: string = this.replaceBlockIfElse();
 
     const regExp: RegExp = /\{\{(.*?)\}\}/gis;
-    let key: RegExpExecArray = regExp.exec(tmpl);
+    let key: RegExpExecArray| null = regExp.exec(tmpl);
 
     while (key) {
       if (key[1]) {
         const tmplValue: string = key[1].trim();
         let data: unknown = getPropertyCtx(ctx, tmplValue);
 
-        // if (typeof data === 'function') {
-        //   window[tmplValue] = data;
-        //   tmpl = tmpl.replace(
-        //     new RegExp(key[0], 'gi'),
-        //     `window.${key[1].trim()}()`
-        //   );
-        // } else
-        if (typeof data !== 'string') {
+        if (typeof data === 'number' || typeof data === 'boolean') {
           data = data.toString();
         }
         if (typeof data === 'string') {
@@ -109,13 +59,13 @@ export class Templator<T> {
     return tmpl;
   }
 
-  _replaceBlockIfElse() {
+  replaceBlockIfElse() {
     // TODO дополнить блоками elseif
-    const ctx: T = this.ctx;
+    const ctx = this.ctx;
     let tmpl: string = this._rawTemplate;
     const regExp: RegExp = /\{%\s*if\s*(.[^\s'",]+)\s*?%\}(.*?)((\{%\s*else\s*%\})(.*?))?(\{%\s*endif\s*%\})/gis;
 
-    let key: RegExpExecArray = regExp.exec(tmpl);
+    let key: RegExpExecArray | null = regExp.exec(tmpl);
 
     while (key) {
       const value = key[1];
@@ -136,12 +86,12 @@ export class Templator<T> {
     return tmpl;
   }
 
-  _getDomEl(rawStr: string) {
+  private getDomEl(rawStr: string) {
     const _rawStr = rawStr.trim().replace(/\n/g, '');
 
     let completeTreeEl = (tmpl: string = _rawStr, treeDepth: number = 0)=> {
       if (!tmpl) {
-        this._consetrateEl(treeDepth);
+        this.consetrateEl(treeDepth);
         return;
       }
       let _tmpl: string = tmpl;
@@ -158,41 +108,43 @@ export class Templator<T> {
       completeTreeEl(_tmpl, _treeDepth);
     };
     completeTreeEl();
-
-    return this.stackTreeEl[0].el;
+    let structEl = this.stackTreeEl[0] as settingsNode;
+    return structEl.el;
   }
 
-  _consetrateEl(treeDepth) {
-    if (this.stackTreeEl.length === 1 && this.stackTreeEl[0].el) {
+  private consetrateEl(treeDepth: number) {
+    const structFirstEl = this.stackTreeEl[0] as settingsNode;
+    if (this.stackTreeEl.length === 1 && structFirstEl.el) {
       return;
     }
     let nCurrentEl = this.stackTreeEl.length - 1 - treeDepth;
-    const rootEl = document.createElement(this.stackTreeEl[nCurrentEl].name);
-    setAttributes(rootEl, this.stackTreeEl[nCurrentEl].attributes);
+    const structEl = this.stackTreeEl[nCurrentEl] as settingsNode;
+    const rootEl = document.createElement(structEl.name);
+    setAttributes(rootEl, structEl.attributes);
     for (nCurrentEl++; nCurrentEl < this.stackTreeEl.length; nCurrentEl++) {
       const currentEl = this.stackTreeEl[nCurrentEl];
 
-      if (currentEl.typeEl === 'el') {
+      if (currentEl.typeEl === 'el' && currentEl.el instanceof HTMLElement) {
         rootEl.appendChild(currentEl.el);
       }
       if (currentEl.typeEl === 'text') {
-        // this._searchChildreninTmpl(this.stackTreeEl[nCurrentEl].content);
-        let textNode = document.createTextNode(this.stackTreeEl[nCurrentEl].content);
+        let textNode = document.createTextNode(this.stackTreeEl[nCurrentEl].content || '');
         rootEl.appendChild(textNode);
       }
     }
     this.stackTreeEl.splice(this.stackTreeEl.length - treeDepth, this.stackTreeEl.length - 1);
-    this.stackTreeEl[this.stackTreeEl.length - 1].el = rootEl;
+    const lastEl = this.stackTreeEl[this.stackTreeEl.length - 1] as settingsNode;
+    lastEl.el = rootEl;
   }
 
-  _insertChildren(tmpl) {
+  private insertChildren(tmpl: string) {
     let _tmpl: string = tmpl;
     const regChildrenComponent: RegExp = /{%((\s*(\w+)\s*(context:\s*{(.*?)}\s*)?)+?)%}/gis;
-    let key: RegExpExecArray = regChildrenComponent.exec(_tmpl);
+    let key = regChildrenComponent.exec(_tmpl);
     while (key) {
       const nameComponent: string = key[3];
       const child = this.ctx[nameComponent.trim()];
-      if (child) {
+      if (child && typeof child === 'string') {
         _tmpl = _tmpl.replace(key[0], child);
         regChildrenComponent.lastIndex += (-key[0].length + child.length);
       }

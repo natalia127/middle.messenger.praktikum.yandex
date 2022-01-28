@@ -1,7 +1,10 @@
-import { Input } from '../../components/input/input.tmpl';
+import { Input } from '../../components/input/input';
 import { Block } from '../../core/Block';
 import { propsAndChildren } from '../../core/typeBlock';
 import { listChatTmpl } from './listChat.tmpl';
+import { ItemChat } from './itemChat/itemChat';
+import { mockListChatTs } from './mockListChat';
+const itemsChat = mockListChatTs.map(item => new ItemChat(item));
 
 class ListChat extends Block {
   constructor(props: propsAndChildren) {
@@ -14,6 +17,7 @@ class ListChat extends Block {
 }
 
 export default ()=> (new ListChat({
+  itemsChat,
   input: new Input({
     placeholder: 'имя чата',
     class: 'listChat__search',

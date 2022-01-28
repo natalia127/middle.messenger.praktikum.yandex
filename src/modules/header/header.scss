@@ -1,11 +1,24 @@
 
 .header {
   background-color: $aque;
-  ;
+
   padding: 1.2rem;
   position: absolute;
   width: 100%;
   z-index: 1;
+  &__container {
+    display: flex;
+    align-items: center;
+  }
+  &__logo {
+    color:$base-color;
+    font-family: 'Roboto Mono', monospace;
+    text-align: center;
+    flex-grow: 1;
+    font-size: 1.3em;
+
+
+  }
 
 }
 .linkProfile {

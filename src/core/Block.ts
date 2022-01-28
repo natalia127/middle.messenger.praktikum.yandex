@@ -2,9 +2,11 @@ import { Templator } from './templateEngine/Templator';
 import { v4 as makeUUID } from 'uuid';
 import { EventBus } from './EventBus';
 import {
-  eventsType, propsObject, childrenType, separatedPropsChild, IBlock,
-  propsAndChildren as propsAndChildrenType
+  eventsType, propsObject, childrenType, allPossibleProps, IBlock,
+  propsAndChildren as propsAndChildrenType, eventsInnerType,
+  listChildren
 } from './typeBlock';
+import { isEmptyObject } from '../utils/mydash';
 
 enum EVENTS {
   INIT = 'init',
@@ -14,6 +16,7 @@ enum EVENTS {
 }
 
 const NAME_ATT_DATA = 'data-t-id';
+const NAME_ARRAY_DATA = 'data-a-id';
 
 export abstract class Block implements IBlock {
   private element: DocumentFragment;
@@ -30,29 +33,36 @@ export abstract class Block implements IBlock {
 
   private events: eventsType;
 
+  private innerEvents: eventsInnerType;
+
+  private arrayProps: listChildren;
+
   constructor(propsAndChildren: propsAndChildrenType) {
     this.eventBus = new EventBus();
-    const { children, props } = this.getChildren(propsAndChildren);
+    const { children, props, arrayProps } = this.getChildren(propsAndChildren);
     this.children = children;
     this.props = this.makePropsProxy(props);
+    this.arrayProps = arrayProps;
     this.registerEvents();
     this.id = `t${makeUUID()}`;
     this.eventBus.emit(EVENTS.INIT);
   }
 
-  private getChildren(propsAndChildren: propsAndChildrenType): separatedPropsChild {
+  private getChildren(propsAndChildren: propsAndChildrenType): allPossibleProps {
     const children: childrenType = {};
     const props: propsObject = {};
-
+    const arrayProps: listChildren = {};
     Object.entries(propsAndChildren).forEach(([key, value]) => {
       if (value instanceof Block) {
         children[key] = value;
+      } else if (Array.isArray(value) && key !== 'innerEvents') {
+        arrayProps[key] = value;
       } else {
         props[key] = value;
       }
     });
 
-    return { children, props };
+    return { children, props, arrayProps };
   }
 
   private makePropsProxy(props: propsObject): propsObject {
@@ -65,6 +75,7 @@ export abstract class Block implements IBlock {
       set(target, prop: string, value): boolean {
         self.removeEvents();
         const oldProps = { ...target };
+        // eslint-disable-next-line no-param-reassign
         target[prop] = value;
         self.eventBus.emit(EVENTS.FLOW_CDU, oldProps, target);
         return true;
@@ -123,36 +134,82 @@ export abstract class Block implements IBlock {
     this.content = content;
   }
 
-  private _render(): void {
-    let template: string = this.render();
-
+  private getChildMock() {
     const children: {[key: string]: string } = { };
     Object.entries(this.children).forEach(([key, child]) => {
       children[key] = `<div ${NAME_ATT_DATA}="${child.getId()}"></div>`;
+    });
+    return children;
+  }
+
+  private setContentChild(): void {
+    Object.entries(this.children).forEach(([key, child]) => {
       const childContent: HTMLElement| null = document.querySelector(`[${NAME_ATT_DATA}="${child.getId()}"]`);
       if (childContent) {
         child.setContent(childContent);
       }
     });
+  }
 
+  private getArrayPropsMock(): {[key: string]: string } {
+    const mockArrayProps: {[key: string]: string } = { };
+    Object.entries(this.arrayProps).forEach(([key, prop], id) => {
+      mockArrayProps[key] = `<div ${NAME_ARRAY_DATA}="${key}"></div>`;
+    });
+
+    return mockArrayProps;
+  }
+
+  private _render(): void {
+    let template: string = this.render();
+
+    const children: {[key: string]: string } = this.getChildMock();
+    this.setContentChild();
+    const arrayProps = this.getArrayPropsMock();
     const content = new Templator({
       template,
-      context: { ...this.props, ...children }
+      context: { ...this.props, ...children, ...arrayProps }
     }).compile();
 
     content.setAttribute(NAME_ATT_DATA, this.id);
+    this.replaceMockOnChild(content);
+    this.replaceMockArray(content);
+    this.element.appendChild(content);
+    this.addEvents();
+  }
 
+  private replaceMockArray(content: HTMLElement) {
+    if (isEmptyObject(this.arrayProps)) {
+      return;
+    }
+
+    const els = content.querySelectorAll(`[${NAME_ARRAY_DATA}]`);
+
+    Array.from(els).forEach(el =>{
+      const key = el.getAttribute(NAME_ARRAY_DATA);
+      if (key) {
+        const items = this.arrayProps[key];
+        const fragment = new DocumentFragment();
+        items.forEach(item => {
+          if (item instanceof Block) {
+            fragment.appendChild(item.getContent());
+          } // TODO сделать цикл не только для детей
+        });
+        el.replaceWith(fragment);
+      }
+    });
+  }
+
+  private replaceMockOnChild(content: HTMLElement) {
     Object.values(this.children).forEach(child => {
       const stub: HTMLElement | null = content.querySelector(`[${NAME_ATT_DATA}="${child.getId()}"]`);
 
       if (stub) {
         stub.replaceWith(child.getContent());
+        // @ts-ignore: Unreachable code error
         child.setContent(null);
       }
     });
-
-    this.element.appendChild(content);
-    this.addEvents();
   }
 
   protected abstract render(): string;
@@ -165,24 +222,70 @@ export abstract class Block implements IBlock {
   }
 
   private addEvents(): void {
-    let events: eventsType | null = null;
-    if (this.props.events) {
-      events = this.props.events;
-    }
-    if (!events) { return; }
-    this.events = { ...events };
+    this.addRootEvents();
+    this.addInnerEvents();
+  }
 
-    Object.keys(this.events).forEach((eventName: string) => {
-      // @ts-ignore: Unreachable code error
-      this.element.firstChild.addEventListener(eventName, this.events[eventName]);
+  private addRootEvents(): void {
+    let events: eventsType | undefined = this.props.events;
+    if (events) {
+      this.events = Object.keys(events).reduce((acc: eventsType, nameAttached: string) => {
+        if (events) {
+          acc[nameAttached] = events[nameAttached].bind(this);
+        }
+        return acc;
+      }, {});
+      Object.keys(this.events).forEach((eventName: string) => {
+        // @ts-ignore: Unreachable code error
+        this.element.firstChild.addEventListener(eventName, this.events[eventName]);
+      });
+    }
+  }
+
+  private addInnerEvents(): void {
+    if (!this.props.innerEvents) {
+      return;
+    }
+    let events: eventsInnerType = this.props.innerEvents;
+
+    this.innerEvents = events;
+    this.innerEvents.forEach(eventSetings => {
+      if (this.element && this.element.firstChild) {
+        const el = this.element.firstChild as HTMLElement;
+        const target = el.querySelector(`${eventSetings.selector}`);
+        Object.keys(eventSetings).forEach((prop: string) => {
+          if (typeof eventSetings[prop] === 'function' && target) {
+            // @ts-ignore: Unreachable code error
+            // eslint-disable-next-line no-param-reassign
+            eventSetings[prop] = eventSetings[prop].bind(this);
+            // @ts-ignore: Unreachable code error
+            target.addEventListener(prop, eventSetings[prop]);
+          }
+        });
+      }
     });
   }
 
   private removeEvents(): void {
-    Object.keys(this.events).forEach((eventName: string) => {
-      // @ts-ignore: Unreachable code error
-      this.content.removeEventListener(eventName, this.events[eventName]);
-    });
+    if (this.events) {
+      Object.keys(this.events).forEach((eventName: string) => {
+        // @ts-ignore: Unreachable code error
+        this.content.removeEventListener(eventName, this.events[eventName]);
+      });
+    }
+    if (this.innerEvents) {
+      this.innerEvents.forEach(eventSetings => {
+        if (this.content) {
+          const target = this.content.querySelector(eventSetings.selector);
+          Object.keys(eventSetings).forEach((prop: string) => {
+            if (prop !== 'selector') {
+              // @ts-ignore: Unreachable code error
+              target.removeEventListener(prop, eventSetings[prop]);
+            }
+          });
+        }
+      });
+    }
   }
 
   private _componentDidUpdate(oldProps: propsObject, newProps: propsObject): void {

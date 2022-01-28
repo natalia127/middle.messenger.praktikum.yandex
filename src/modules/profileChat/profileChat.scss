@@ -1,13 +1,5 @@
 .profileChat {
   position: relative;
-  padding: 7em 0 2em; 
-  &__iconSettings {
-    position: absolute;
-    width: 2em;
-    height: 2em;
-    cursor: pointer;
-    right: 1em;
-  }
   &__title {
     font-size: 1.2em;
     font-weight: bold;
@@ -22,7 +14,7 @@
     margin-top: 2em;
   }
   &__party {
-    margin-top: 4em;
+    margin-top: 2em;
   }
   &__partyTitle {
     font-size: 1.1em;
@@ -43,5 +35,10 @@
   &__participant {
     display: flex;
     align-items: center;
+  }
+  &__avatar {
+    display: flex;
+    justify-content: center;
+    margin-top: 2em;
   }
 }

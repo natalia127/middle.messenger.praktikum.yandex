@@ -1,10 +1,13 @@
-import { Button } from '../../components/button/button.tmpl';
-import { Input } from '../../components/input/input.tmpl';
-import { SIGNUP, CHAT } from '../../router/namePath';
+import { Button } from '../../components/button/button';
+import { Input } from '../../components/input/input';
+import { SIGNUP, CHAT } from '../../core/router/namePath';
 import { Block } from '../../core/Block';
 import { tmplSignIn } from './signIn.tmpl';
 import { propsAndChildren } from '../../core/typeBlock';
-
+import {
+  validateForm,
+  validateInput
+} from '../../utils/validate';
 export class SignIn extends Block {
   constructor(props: propsAndChildren) {
     const context = {
@@ -24,16 +27,30 @@ export default ()=> (new SignIn({
   inputLogin: new Input({
     placeholder: 'Логин',
     class: 'input--withBord form__input ',
-    name: 'login'
+    name: 'login',
+    events: {
+      blur: validateInput
+    }
   }),
   inputPassword: new Input({
     placeholder: 'пароль',
     class: 'input--withBord form__input',
     type: 'password',
-    name: 'password'
+    name: 'password',
+    events: {
+      blur: validateInput
+    }
   }),
   button: new Button({
-    value: `<a href="${CHAT}">Войти</a>`,
+    value: 'Войти',
     class: 'form__button'
-  })
+
+  }),
+  events: {
+    submit: function (e) {
+      validateForm(e, ()=>{
+        window.location.href = '/';
+      });
+    }
+  }
 }));

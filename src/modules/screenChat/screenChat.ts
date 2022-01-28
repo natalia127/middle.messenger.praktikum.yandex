@@ -1,8 +1,11 @@
-import { Input } from '../../components/input/input.tmpl';
+import { Input } from '../../components/input/input';
 import { Block } from '../../core/Block';
 import { screenChat } from './screenChat.tmpl';
 import { propsAndChildren } from '../../core/typeBlock';
+import { Avatar } from '../../components/avatar/avatar';
 
+const iconClip = new URL('../../img/clip.svg', import.meta.url);
+const iconSend = new URL('../../img/send.svg', import.meta.url);
 class ScreenChat extends Block {
   constructor(props: propsAndChildren) {
     super(props);
@@ -16,7 +19,12 @@ class ScreenChat extends Block {
 export default ()=> (new ScreenChat({
   Input: new Input({
     placeholder: 'Написать сообщение',
-    class: 'chat__print',
-    type: 'text'
-  })
+    class: 'screenChat__print',
+    type: 'text',
+    name: 'message'
+  }),
+  iconClip: iconClip.href,
+  iconSend: iconSend.href,
+  avatar1: new Avatar({ size: '2.5em' }),
+  avatar2: new Avatar({ size: '2.5em' })
 }));

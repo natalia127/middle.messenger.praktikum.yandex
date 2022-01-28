@@ -1,6 +1,6 @@
 import signIn from '../../modules/signIn/signIn';
 import signUp from '../../modules/signUp/signUp';
-import { SIGNIN } from '../../router/namePath';
+import { SIGNIN } from '../../core/router/namePath';
 import { Block } from '../../core/Block';
 import { propsAndChildren } from '../../core/typeBlock';
 
