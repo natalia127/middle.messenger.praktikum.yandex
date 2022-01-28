@@ -106,7 +106,7 @@ export const validateInput = function (e:Event | null, el: HTMLInputElement) {
   if (_el && _el.tagName === 'INPUT') {
     let validResult = isValidInput(e, _el as HTMLInputElement);
 
-    toggleErrorOnInput(_el as HTMLInputElement, (validResult?.isValid || true));
+    toggleErrorOnInput(_el as HTMLInputElement, (validResult?.isValid));
   }
 };
 
@@ -121,7 +121,7 @@ export const validateForm = function (e: Event, callback: Function) {
       let validResult = isValidInput(e, el);
       isFormValid = isFormValid && !!validResult?.isValid;
 
-      toggleErrorOnInput(el, (validResult?.isValid || true));
+      toggleErrorOnInput(el, (validResult?.isValid));
     }
   });
 
