@@ -1,12 +1,12 @@
 import { Button } from '../../components/button/button';
 import { Input } from '../../components/input/input';
 import { Block } from '../../core/Block';
-import { propsAndChildren } from '../../core/typeBlock';
+import { TPropsAndChildren } from '../../core/typeBlock';
 import { tmplSignUp } from './signUp.tmpl';
 import { validateForm, validateInput } from '../../utils/validate';
 
 export class SignUp extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     const context = {
       value: 'Sign Up'
     };

@@ -1,11 +1,11 @@
-enum METHODS {
+enum EMETHODS {
   GET = 'GET',
   POST ='POST',
   PUT ='PUT',
   DELETE ='DELETE'
 }
 
-type possibleMethods = METHODS.GET | METHODS.POST | METHODS.PUT | METHODS.DELETE
+type possibleMethods = EMETHODS.GET | EMETHODS.POST | EMETHODS.PUT | EMETHODS.DELETE
 
 function queryStringify(data : Document) {
   if (typeof data !== 'object') {
@@ -20,19 +20,19 @@ function queryStringify(data : Document) {
 
 export class HTTPTransport {
   get = (url: string, options = { timeout: 0 }) => {
-    return this.request(url, { ...options, method: METHODS.GET }, options.timeout);
+    return this.request(url, { ...options, method: EMETHODS.GET }, options.timeout);
   };
 
   post = (url: string, options = { timeout: 0 }) => {
-    return this.request(url, { ...options, method: METHODS.POST }, options.timeout);
+    return this.request(url, { ...options, method: EMETHODS.POST }, options.timeout);
   };
 
   put = (url: string, options = { timeout: 0 }) => {
-    return this.request(url, { ...options, method: METHODS.PUT }, options.timeout);
+    return this.request(url, { ...options, method: EMETHODS.PUT }, options.timeout);
   };
 
   delete = (url: string, options = { timeout: 0 }) => {
-    return this.request(url, { ...options, method: METHODS.DELETE }, options.timeout);
+    return this.request(url, { ...options, method: EMETHODS.DELETE }, options.timeout);
   };
 
   request = (
@@ -50,7 +50,7 @@ export class HTTPTransport {
       }
 
       const xhr = new XMLHttpRequest();
-      const isGet = method === METHODS.GET;
+      const isGet = method === EMETHODS.GET;
 
       xhr.open(
         method,

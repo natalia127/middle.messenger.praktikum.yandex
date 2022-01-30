@@ -1,10 +1,10 @@
 import { PROFILE, CHAT, authorizedPaths } from '../../core/router/namePath';
 import { Block } from '../../core/Block';
-import { propsAndChildren } from '../../core/typeBlock';
+import { TPropsAndChildren } from '../../core/typeBlock';
 const personIcon = new URL('../../img/person.svg', import.meta.url);
 const chatIcon = new URL('../../img/chat.svg', import.meta.url);
 export class Header extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     super(props);
   }
 

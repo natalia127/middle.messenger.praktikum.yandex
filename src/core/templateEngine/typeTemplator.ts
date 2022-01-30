@@ -1,34 +1,34 @@
-export type ctxType = {[key: string]: boolean | number | string| null| undefined }
+export type TCtx = {[key: string]: boolean | number | string| null| undefined }
 
 export type attribute = {
   value: string,
   key: string
 };
 
-export type infoTag = {
+export type TInfoTag = {
   // eslint-disable-next-line no-undef
   name: string,
   attributes: attribute[]
 };
 
-export type fullInfoTag = infoTag & {
+export type TFullTInfoTag = TInfoTag & {
   indexEndInTmpl: number,
   content?: string,
   typeTag: 'fullTag' | 'singleTag'
 };
 
-export type settingsNode = fullInfoTag & {
+export type TSettingsNode = TFullTInfoTag & {
   typeEl: 'el',
   el: HTMLElement | null,
 };
-export type settingsTextNode = {
+export type TSettingsTextNode = {
   typeEl: 'text',
   content: string,
   indexEndInTmpl: number
 };
 
-export type TemplatorStruct = {
+export type TTemplatorStruct = {
   template: string,
-  context: ctxType,
-  children: TemplatorStruct,
+  context: TCtx,
+  children: TTemplatorStruct,
 }

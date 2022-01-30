@@ -1,10 +1,10 @@
 import { Avatar } from '../../components/avatar/avatar';
 import { profileChatTmpl } from './profileChat.tmpl';
 import { Block } from '../../core/Block';
-import { propsAndChildren } from '../../core/typeBlock';
+import { TPropsAndChildren } from '../../core/typeBlock';
 
 export class ProfileChat extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     super(props);
   }
 

@@ -1,9 +1,9 @@
-import { ctxType } from './typeTemplator';
+import { TCtx } from './typeTemplator';
 import {
-  attribute, infoTag, fullInfoTag, settingsNode, settingsTextNode
+  attribute, TInfoTag, TFullTInfoTag, TSettingsNode, TSettingsTextNode
 } from './typeTemplator';
 
-export function getPropertyCtx(obj: ctxType, path: string, defaultValue: unknown = ''): unknown {
+export function getPropertyCtx(obj: TCtx, path: string, defaultValue: unknown = ''): unknown {
   const keys = path.split('.');
 
   let result = obj;
@@ -11,7 +11,7 @@ export function getPropertyCtx(obj: ctxType, path: string, defaultValue: unknown
     result = result[key];
   });
 
-  if (typeof result !== 'object' && typeof result !== 'undefined') {
+  if (typeof result === 'number' && typeof result !== 'boolean' && typeof result !== 'string') {
     return result;
   }
   return defaultValue;
@@ -52,8 +52,8 @@ export function getNameTag(rawStr: string): string {
   return nameTag;
 }
 
-export function parseInfoTag(initialStr: string): infoTag {
-  const result: infoTag = {
+export function parseTInfoTag(initialStr: string): TInfoTag {
+  const result: TInfoTag = {
     name: '',
     attributes: []
   };
@@ -67,9 +67,9 @@ export function parseInfoTag(initialStr: string): infoTag {
   return result;
 }
 
-export function getInfoSingleTag(tag: RegExpMatchArray): fullInfoTag {
-  const { name, attributes }: infoTag = parseInfoTag(tag[1]);
-  const result: fullInfoTag = {
+export function getInfoSingleTag(tag: RegExpMatchArray): TFullTInfoTag {
+  const { name, attributes }: TInfoTag = parseTInfoTag(tag[1]);
+  const result: TFullTInfoTag = {
     name,
     attributes,
     indexEndInTmpl: tag[0].length,
@@ -78,8 +78,8 @@ export function getInfoSingleTag(tag: RegExpMatchArray): fullInfoTag {
   return result;
 }
 
-export function getInfoFullTag(tag: RegExpMatchArray, rawStr: string): fullInfoTag {
-  const { name, attributes }: infoTag = parseInfoTag(tag[1]);
+export function getInfoFullTag(tag: RegExpMatchArray, rawStr: string): TFullTInfoTag {
+  const { name, attributes }: TInfoTag = parseTInfoTag(tag[1]);
   const regCurrentClosingTag: RegExp = new RegExp(`</${name}\\s*>`, 'g');
   const regCurrentOpeningTag: RegExp = new RegExp(`<${name}.*?\\s*>`, 'g');
   regCurrentOpeningTag.lastIndex = tag[0].length;
@@ -117,13 +117,13 @@ export function setAttributes(el: HTMLElement, attributes: attribute[]) {
   }));
 }
 
-export function getTag(rawStr: string): fullInfoTag | null {
+export function getTag(rawStr: string): TFullTInfoTag | null {
   const regSingleTag: RegExp = /<(.[^>]+?)\/>{1}?/;
   const regOpeningTag: RegExp = /<(.+?)>/;
 
   const singleTag: RegExpMatchArray | null = rawStr.match(regSingleTag);
   const openingTag: RegExpMatchArray | null = rawStr.match(regOpeningTag);
-  let result: fullInfoTag | null = null;
+  let result: TFullTInfoTag | null = null;
 
   if (singleTag && singleTag.index === 0) {
     result = getInfoSingleTag(singleTag);
@@ -139,11 +139,11 @@ export function getText(tmpl: string): string {
   return text ? text[0] : '';
 }
 
-export function getSettingsNode(tmpl: string): settingsNode | settingsTextNode {
+export function getTSettingsNode(tmpl: string): TSettingsNode | TSettingsTextNode {
   const tag = getTag(tmpl);
-  let _settingsNode: settingsNode | settingsTextNode;
+  let _TSettingsNode: TSettingsNode | TSettingsTextNode;
   if (tag) {
-    _settingsNode = {
+    _TSettingsNode = {
       ...tag,
       typeEl: 'el',
       el: null
@@ -152,15 +152,15 @@ export function getSettingsNode(tmpl: string): settingsNode | settingsTextNode {
     if (tag.typeTag === 'singleTag') {
       const singleEL: HTMLElement = document.createElement(tag.name);
       setAttributes(singleEL, tag.attributes);
-      _settingsNode.el = singleEL;
+      _TSettingsNode.el = singleEL;
     }
   } else {
     const textContent: string = getText(tmpl);
-    _settingsNode = {
+    _TSettingsNode = {
       typeEl: 'text',
       content: textContent,
       indexEndInTmpl: textContent.length
     };
   }
-  return _settingsNode;
+  return _TSettingsNode;
 }

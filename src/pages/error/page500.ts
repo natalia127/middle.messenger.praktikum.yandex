@@ -1,8 +1,8 @@
-import { propsAndChildren } from '../../core/typeBlock';
+import { TPropsAndChildren } from '../../core/typeBlock';
 import { Block } from '../../core/Block';
 
 export class Page500 extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     super(props);
   }
 

@@ -3,12 +3,12 @@ import profileChat from '../../modules/profileChat/profileChat';
 import settingsChat from '../../modules/settingsChat/settingsChat';
 import screenChat from '../../modules/screenChat/screenChat';
 import { Block } from '../../core/Block';
-import { propsAndChildren } from '../../core/typeBlock';
+import { TPropsAndChildren } from '../../core/typeBlock';
 
 const iSetting = new URL('../../img/cog-outline.svg', import.meta.url);
 const iProfileChat = new URL('../../img/account-group.svg', import.meta.url);
 class Chat extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     super(props);
   }
 

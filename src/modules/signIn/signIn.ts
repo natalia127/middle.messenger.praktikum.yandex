@@ -3,13 +3,13 @@ import { Input } from '../../components/input/input';
 import { SIGNUP, CHAT } from '../../core/router/namePath';
 import { Block } from '../../core/Block';
 import { tmplSignIn } from './signIn.tmpl';
-import { propsAndChildren } from '../../core/typeBlock';
+import { TPropsAndChildren } from '../../core/typeBlock';
 import {
   validateForm,
   validateInput
 } from '../../utils/validate';
 export class SignIn extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     const context = {
       value: 'Sign In'
     };

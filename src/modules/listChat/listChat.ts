@@ -1,13 +1,13 @@
 import { Input } from '../../components/input/input';
 import { Block } from '../../core/Block';
-import { propsAndChildren } from '../../core/typeBlock';
+import { TPropsAndChildren } from '../../core/typeBlock';
 import { listChatTmpl } from './listChat.tmpl';
 import { ItemChat } from './itemChat/itemChat';
 import { mockListChatTs } from './mockListChat';
 const itemsChat = mockListChatTs.map(item => new ItemChat(item));
 
 class ListChat extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     super(props);
   }
 

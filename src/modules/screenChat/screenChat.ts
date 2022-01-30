@@ -1,13 +1,13 @@
 import { Input } from '../../components/input/input';
 import { Block } from '../../core/Block';
 import { screenChat } from './screenChat.tmpl';
-import { propsAndChildren } from '../../core/typeBlock';
+import { TPropsAndChildren } from '../../core/typeBlock';
 import { Avatar } from '../../components/avatar/avatar';
 
 const iconClip = new URL('../../img/clip.svg', import.meta.url);
 const iconSend = new URL('../../img/send.svg', import.meta.url);
 class ScreenChat extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     super(props);
   }
 

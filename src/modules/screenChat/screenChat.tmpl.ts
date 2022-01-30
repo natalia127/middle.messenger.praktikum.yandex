@@ -1,7 +1,3 @@
-// const screenChat = `<div class="screenChat fullContainer">
-//   <div class="screenChat__choice">Выберите чат чтобы отправить сообщение</div>
-// </div>`
-
 export const screenChat: string = `<div class="screenChat">
   <div class="screenChat__correspondence">
     <div class="screenChat__wrapperMessages">

@@ -3,11 +3,11 @@ import { Block } from '../../../core/Block';
 
 import { Button } from '../../../components/button/button';
 import { context } from '../tempContext';
-import { propsAndChildren } from '../../../core/typeBlock';
+import { TPropsAndChildren } from '../../../core/typeBlock';
 import { template } from './myProfileEdit.tmpl';
 import { validateForm, validateInput } from '../../../utils/validate';
 class MyProfileEdit extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     super(props);
   }
 

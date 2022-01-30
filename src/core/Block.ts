@@ -2,13 +2,13 @@ import { Templator } from './templateEngine/Templator';
 import { v4 as makeUUID } from 'uuid';
 import { EventBus } from './EventBus';
 import {
-  eventsType, propsObject, childrenType, allPossibleProps, IBlock,
-  propsAndChildren as propsAndChildrenType, eventsInnerType,
-  listChildren
+  TEvents, TPropsObject, TChildren, allPossibleProps, IBlock,
+  TPropsAndChildren as propsAndTChildren, TEventsInner,
+  TListChildren
 } from './typeBlock';
 import { isEmptyObject } from '../utils/mydash';
 
-enum EVENTS {
+enum EEVENTS {
   INIT = 'init',
   FLOW_CDM = 'flow:component-did-mount',
   FLOW_CDU = 'flow:component-did-update',
@@ -21,7 +21,7 @@ const NAME_ARRAY_DATA = 'data-a-id';
 export abstract class Block implements IBlock {
   private element: DocumentFragment;
 
-  private props: propsObject;
+  private props: TPropsObject;
 
   private readonly eventBus: EventBus;
 
@@ -29,30 +29,30 @@ export abstract class Block implements IBlock {
 
   private content: HTMLElement | null;
 
-  private children: childrenType;
+  private children: TChildren;
 
-  private events: eventsType;
+  private events: TEvents;
 
-  private innerEvents: eventsInnerType;
+  private innerEvents: TEventsInner;
 
-  private arrayProps: listChildren;
+  private arrayProps: TListChildren;
 
-  constructor(propsAndChildren: propsAndChildrenType) {
+  constructor(TPropsAndChildren: propsAndTChildren) {
     this.eventBus = new EventBus();
-    const { children, props, arrayProps } = this.getChildren(propsAndChildren);
+    const { children, props, arrayProps } = this.getChildren(TPropsAndChildren);
     this.children = children;
     this.props = this.makePropsProxy(props);
     this.arrayProps = arrayProps;
     this.registerEvents();
     this.id = `t${makeUUID()}`;
-    this.eventBus.emit(EVENTS.INIT);
+    this.eventBus.emit(EEVENTS.INIT);
   }
 
-  private getChildren(propsAndChildren: propsAndChildrenType): allPossibleProps {
-    const children: childrenType = {};
-    const props: propsObject = {};
-    const arrayProps: listChildren = {};
-    Object.entries(propsAndChildren).forEach(([key, value]) => {
+  private getChildren(TPropsAndChildren: propsAndTChildren): allPossibleProps {
+    const children: TChildren = {};
+    const props: TPropsObject = {};
+    const arrayProps: TListChildren = {};
+    Object.entries(TPropsAndChildren).forEach(([key, value]) => {
       if (value instanceof Block) {
         children[key] = value;
       } else if (Array.isArray(value) && key !== 'innerEvents') {
@@ -65,7 +65,7 @@ export abstract class Block implements IBlock {
     return { children, props, arrayProps };
   }
 
-  private makePropsProxy(props: propsObject): propsObject {
+  private makePropsProxy(props: TPropsObject): TPropsObject {
     const self = this;
     return new Proxy(props, {
       get(target, prop: string) {
@@ -77,7 +77,7 @@ export abstract class Block implements IBlock {
         const oldProps = { ...target };
         // eslint-disable-next-line no-param-reassign
         target[prop] = value;
-        self.eventBus.emit(EVENTS.FLOW_CDU, oldProps, target);
+        self.eventBus.emit(EEVENTS.FLOW_CDU, oldProps, target);
         return true;
       },
       deleteProperty() {
@@ -87,15 +87,15 @@ export abstract class Block implements IBlock {
   }
 
   private registerEvents(): void {
-    this.eventBus.on(EVENTS.INIT, this.init.bind(this));
-    this.eventBus.on(EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
-    this.eventBus.on(EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
-    this.eventBus.on(EVENTS.FLOW_RENDER, this._render.bind(this));
+    this.eventBus.on(EEVENTS.INIT, this.init.bind(this));
+    this.eventBus.on(EEVENTS.FLOW_CDM, this._componentDidMount.bind(this));
+    this.eventBus.on(EEVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
+    this.eventBus.on(EEVENTS.FLOW_RENDER, this._render.bind(this));
   }
 
   init(): void {
     this.createResources();
-    this.eventBus.emit(EVENTS.FLOW_RENDER);
+    this.eventBus.emit(EEVENTS.FLOW_RENDER);
   }
 
   private createResources(): void {
@@ -109,7 +109,7 @@ export abstract class Block implements IBlock {
   }
 
   dispatchComponentDidMount(): void {
-    this.eventBus.emit(EVENTS.FLOW_CDM);
+    this.eventBus.emit(EEVENTS.FLOW_CDM);
   }
 
   private _componentDidMount(): void {
@@ -227,9 +227,9 @@ export abstract class Block implements IBlock {
   }
 
   private addRootEvents(): void {
-    let events: eventsType | undefined = this.props.events;
+    let events: TEvents | undefined = this.props.events;
     if (events) {
-      this.events = Object.keys(events).reduce((acc: eventsType, nameAttached: string) => {
+      this.events = Object.keys(events).reduce((acc: TEvents, nameAttached: string) => {
         if (events) {
           acc[nameAttached] = events[nameAttached].bind(this);
         }
@@ -246,7 +246,7 @@ export abstract class Block implements IBlock {
     if (!this.props.innerEvents) {
       return;
     }
-    let events: eventsInnerType = this.props.innerEvents;
+    let events: TEventsInner = this.props.innerEvents;
 
     this.innerEvents = events;
     this.innerEvents.forEach(eventSetings => {
@@ -288,7 +288,7 @@ export abstract class Block implements IBlock {
     }
   }
 
-  private _componentDidUpdate(oldProps: propsObject, newProps: propsObject): void {
+  private _componentDidUpdate(oldProps: TPropsObject, newProps: TPropsObject): void {
     const response: boolean = this.componentDidUpdate(oldProps, newProps);
     if (!response) {
       return;
@@ -301,11 +301,11 @@ export abstract class Block implements IBlock {
   }
 
   /* eslint no-unused-vars: ["error", { "args": "none" }] */
-  protected componentDidUpdate(oldProps: propsObject, newProps: propsObject): boolean {
+  protected componentDidUpdate(oldProps: TPropsObject, newProps: TPropsObject): boolean {
     return true;
   }
 
-  setProps(nextProps: propsObject): void {
+  setProps(nextProps: TPropsObject): void {
     if (!nextProps) {
       return;
     }
@@ -315,13 +315,13 @@ export abstract class Block implements IBlock {
 
   show(): void {
     if (this.content instanceof HTMLElement) {
-      this.content.style.display = 'block';
+      this.content.classList.remove('hidden');
     }
   }
 
   hide(): void {
     if (this.content instanceof HTMLElement) {
-      this.content.style.display = 'none';
+      this.content.classList.add('hidden');
     }
   }
 }

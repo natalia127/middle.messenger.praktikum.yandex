@@ -2,12 +2,12 @@ import { Input } from '../../../components/input/input';
 import { Button } from '../../../components/button/button';
 import { context } from '../tempContext';
 import { Block } from '../../../core/Block';
-import { propsAndChildren } from '../../../core/typeBlock';
+import { TPropsAndChildren } from '../../../core/typeBlock';
 import { validateForm, validateInput } from '../../../utils/validate';
 import { template } from './passwordEdit.tmpl';
 
 export class PasswordEdit extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     const newProps = { ...context, ...props };
     super(newProps);
   }

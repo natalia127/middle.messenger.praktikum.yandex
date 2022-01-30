@@ -1,9 +1,9 @@
-// TODO отрефакторить , + сделать циклы
+// TODO заменить магические цифры
 
-import { getPropertyCtx, getSettingsNode, setAttributes } from './utilsTemplator';
+import { getPropertyCtx, getTSettingsNode, setAttributes } from './utilsTemplator';
 import {
-  settingsNode, settingsTextNode, TemplatorStruct,
-  ctxType
+  TSettingsNode, TSettingsTextNode, TTemplatorStruct,
+  TCtx
 } from './typeTemplator';
 
 export class Templator {
@@ -11,11 +11,11 @@ export class Templator {
 
   private readonly _rawTemplate: string;
 
-  private ctx: ctxType;
+  private ctx: TCtx;
 
-  private stackTreeEl: Array<settingsTextNode | settingsNode>;
+  private stackTreeEl: Array<TSettingsTextNode | TSettingsNode>;
 
-  constructor(component: TemplatorStruct) {
+  constructor(component: TTemplatorStruct) {
     this._rawTemplate = component.template;
     this.ctx = component.context;
     this.stackTreeEl = [];
@@ -35,15 +35,16 @@ export class Templator {
   }
 
   private replaceOnCtxValue() {
-    const ctx: ctxType = this.ctx;
+    const ctx: TCtx = this.ctx;
     let tmpl: string = this.replaceBlockIfElse();
 
     const regExp: RegExp = /\{\{(.*?)\}\}/gis;
     let key: RegExpExecArray| null = regExp.exec(tmpl);
 
     while (key) {
-      if (key[1]) {
-        const tmplValue: string = key[1].trim();
+      const rawValue = key[1];
+      if (rawValue) {
+        const tmplValue: string = rawValue.trim();
         let data: unknown = getPropertyCtx(ctx, tmplValue);
 
         if (typeof data === 'number' || typeof data === 'boolean') {
@@ -95,7 +96,7 @@ export class Templator {
         return;
       }
       let _tmpl: string = tmpl;
-      const nodeStruct: settingsNode | settingsTextNode = getSettingsNode(tmpl);
+      const nodeStruct: TSettingsNode | TSettingsTextNode = getTSettingsNode(tmpl);
       this.stackTreeEl.push(nodeStruct);
 
       if (nodeStruct.typeEl === 'el' && nodeStruct.typeTag === 'fullTag') {
@@ -108,17 +109,17 @@ export class Templator {
       completeTreeEl(_tmpl, _treeDepth);
     };
     completeTreeEl();
-    let structEl = this.stackTreeEl[0] as settingsNode;
+    let structEl = this.stackTreeEl[0] as TSettingsNode;
     return structEl.el;
   }
 
   private consetrateEl(treeDepth: number) {
-    const structFirstEl = this.stackTreeEl[0] as settingsNode;
+    const structFirstEl = this.stackTreeEl[0] as TSettingsNode;
     if (this.stackTreeEl.length === 1 && structFirstEl.el) {
       return;
     }
     let nCurrentEl = this.stackTreeEl.length - 1 - treeDepth;
-    const structEl = this.stackTreeEl[nCurrentEl] as settingsNode;
+    const structEl = this.stackTreeEl[nCurrentEl] as TSettingsNode;
     const rootEl = document.createElement(structEl.name);
     setAttributes(rootEl, structEl.attributes);
     for (nCurrentEl++; nCurrentEl < this.stackTreeEl.length; nCurrentEl++) {
@@ -133,7 +134,7 @@ export class Templator {
       }
     }
     this.stackTreeEl.splice(this.stackTreeEl.length - treeDepth, this.stackTreeEl.length - 1);
-    const lastEl = this.stackTreeEl[this.stackTreeEl.length - 1] as settingsNode;
+    const lastEl = this.stackTreeEl[this.stackTreeEl.length - 1] as TSettingsNode;
     lastEl.el = rootEl;
   }
 

@@ -1,13 +1,13 @@
 import header from '../modules/header/header';
 import { Block } from '../core/Block';
-import { propsAndChildren } from '../core/typeBlock';
+import { TPropsAndChildren } from '../core/typeBlock';
 
 import { getComponentTmpl } from '../core/router/routing';
 
 let main = getComponentTmpl();
 
 class App extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     super(props);
   }
 

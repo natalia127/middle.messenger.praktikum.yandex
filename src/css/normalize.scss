@@ -1,83 +1,105 @@
-html, body, ul, ol, li, form, fieldset, legend
-{
-	margin: 0;
-	padding: 0;
+html,
+body,
+ul,
+ol,
+li,
+form,
+fieldset,
+legend {
+  margin: 0;
+  padding: 0;
 }
+
 body {
-	font-size: 16px;
+  font-size: 16px;
 }
- 
+
 html {
--webkit-box-sizing: border-box;
-		-moz-box-sizing: border-box;
-				box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 *,
 *::before,
 *::after {
-		-webkit-box-sizing: inherit;
-				-moz-box-sizing: inherit;
-						box-sizing: inherit;
+  box-sizing: inherit;
 }
-h1, h2, h3, h4, h5, h6, p { margin-top: 0; }
- 
-fieldset,img { border: 0; }
- 
-legend { color: #000; }
- 
-li { list-style: none; }
- 
-sup { vertical-align: text-top; }
- 
-sub { vertical-align: text-bottom; }
- 
-table
-{
-	border-collapse: collapse;
-	border-spacing: 0;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-top: 0;
 }
- 
-caption, th, td
-{
-	text-align: left;
-	vertical-align: top;
-	font-weight: normal;
+
+fieldset,
+img {
+  border: 0;
 }
- 
-input, textarea, select
-{
-	font-size: 110%;
-	line-height: 1.1;
+
+legend {
+  color: #000;
 }
- 
-abbr, acronym
-{
-	border-bottom: .1em dotted;
-	cursor: help;
+
+li {
+  list-style: none;
+}
+
+sup {
+  vertical-align: text-top;
+}
+
+sub {
+  vertical-align: text-bottom;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+caption,
+th,
+td {
+  text-align: left;
+  vertical-align: top;
+  font-weight: normal;
+}
+
+input,
+textarea,
+select {
+  font-size: 110%;
+  line-height: 1.1;
+}
+
+abbr,
+acronym {
+  border-bottom: 0.1em dotted;
+  cursor: help;
 }
 
 input {
-	outline: none;
-	border: none;
+  outline: none;
+  border: none;
 }
 
 button {
-	outline: none!important;
-	border: none;
-	background: 0 0;
+  outline: none !important;
+  border: none;
+  background: 0 0;
 }
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  margin: 0;
 }
 
-
-a:active, 
+a:active,
 a:hover,
-a:visited,  
+a:visited,
 a {
   text-decoration: none;
   color: inherit;

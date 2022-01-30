@@ -1,12 +1,12 @@
 import { Avatar } from '../../../components/avatar/avatar';
 import { template } from './myProfile.tmpl';
 import { Block } from '../../../core/Block';
-import { propsAndChildren } from '../../../core/typeBlock';
+import { TPropsAndChildren } from '../../../core/typeBlock';
 
 import { context } from '../tempContext';
 
 class MyProfile extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     super(props);
   }
 

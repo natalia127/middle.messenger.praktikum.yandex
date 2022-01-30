@@ -1,12 +1,12 @@
-export type eventsType = { [key: string]: Function }
-export type eventsInnerType =
+export type TEvents = { [key: string]: Function }
+export type TEventsInner =
 { [key: string]: Function | string,
   selector: string }[];
 
-export type propsObject = {
+export type TPropsObject = {
   [key: string]: boolean | number | string| null | Function| object| undefined,
-  events?: eventsType,
-  innerEvents?: eventsInnerType
+  events?: TEvents,
+  innerEvents?: TEventsInner
 }
 export interface IBlock {
   init(): void,
@@ -16,23 +16,23 @@ export interface IBlock {
   setContent(content: HTMLElement): void,
   getContent(): HTMLElement | DocumentFragment,
   // eslint-disable-next-line no-unused-vars
-  setProps(nextProps: propsObject): void,
+  setProps(nextProps: TPropsObject): void,
   show(): void,
   hide(): void,
   getId(): string
 }
 
-export type childrenType = {
+export type TChildren = {
   [key: string]: IBlock
 }
 
-export type listChildren = {
+export type TListChildren = {
   [key: string]: IBlock[]
 }
 
 export type allPossibleProps = {
-  children: childrenType,
-  props: propsObject,
-  arrayProps: listChildren
+  children: TChildren,
+  props: TPropsObject,
+  arrayProps: TListChildren
 }
-export type propsAndChildren = propsObject | childrenType;
+export type TPropsAndChildren = TPropsObject | TChildren;

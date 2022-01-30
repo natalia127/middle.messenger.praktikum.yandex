@@ -1,5 +1,6 @@
 import { Block } from '../../core/Block';
-import { propsAndChildren } from '../../core/typeBlock';
+import { TPropsAndChildren } from '../../core/typeBlock';
+import { addStyle } from '../../utils/mydash';
 
 const personIcon = new URL('../../img/account.svg', import.meta.url);
 function getStyleAvatar(size: string) {
@@ -20,11 +21,12 @@ const context = {
 };
 
 export class Avatar extends Block {
-  constructor(props: propsAndChildren) {
+  constructor(props: TPropsAndChildren) {
     const _props = { ...context, ...props };
     _props._styles = getStyleAvatar(_props.size);
     if (_props.isChange) {
-      _props._styles = _props._styles.replace(';', ';cursor: pointer;');
+      // TODO переделать на генерацию стилей
+      _props._styles = addStyle(_props._styles, 'cursor: pointer');
     }
 
     super(_props);
