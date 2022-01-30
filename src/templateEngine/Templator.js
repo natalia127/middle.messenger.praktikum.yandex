@@ -48,11 +48,7 @@ export class Templator {
     let key = null;
     while ((key = regPropertyCtx.exec(ctx))) {
       const keyCtx = key[1]
-      let valueCtx = key[4]
-
-      if (!valueCtx) {
-        valueCtx = this.ctx[key[2]]
-      }
+      const valueCtx = key[4] || this.ctx[key[2]];
 
       children.setContext({
         [keyCtx]: valueCtx

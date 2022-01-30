@@ -6,8 +6,8 @@ const context = {
 
 const personIcon = new URL('../../img/person.svg', import.meta.url);
 const chatIcon = new URL('../../img/chat.svg', import.meta.url);
-let icon = location.pathname === CHAT ? personIcon : chatIcon
-let href = location.pathname === CHAT ? PROFILE : CHAT
+const icon = location.pathname === CHAT ? personIcon : chatIcon
+const href = location.pathname === CHAT ? PROFILE : CHAT
 const header = `{% if isAuthorizedPaths %}
   <div class='header'>
     <div class="container">      
