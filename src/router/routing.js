@@ -10,8 +10,7 @@ import Auth from '../pages/auth/auth.tmpl'
 
 export function getComponentTmpl () {
   let path = location.pathname
-
-  if (path !== CHAT && !path.endsWith('.html')) {
+  if (!path.endsWith('.html')) {
     path += '.html'
   }
   let componentTmpl
