@@ -1,0 +1,31 @@
+.chat {
+  box-shadow: $base-box-shadow;
+
+  &__screen {
+    flex-grow: 6;
+  }
+
+  &__listChat {
+    flex-grow: 2;
+  }
+
+  &__profileChat {
+    flex-grow: 3;
+    position: relative;
+    padding: 7em 1.5em 2em;
+    min-width: 27%;
+  }
+
+  &__iSetting {
+    position: absolute;
+    top: 3em;
+    right: 2em;
+    cursor: pointer;
+    z-index: 1;
+    transition: right 0.4s ease-in;
+
+    &--active {
+      right: 20em;
+    }
+  }
+}
