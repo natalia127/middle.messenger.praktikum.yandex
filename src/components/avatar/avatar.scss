@@ -24,3 +24,16 @@
     }
   }
 }
+$sizes-avatar: (
+  'sm': 2.5em,
+  'md': 3em,
+  'lg': 4em,
+  'xl': 5em,
+);
+@each $size in map-keys($sizes-avatar) {
+  .avatar-#{$size} {
+    width: map_get($sizes-avatar, $size);
+    height: map_get($sizes-avatar, $size);
+    border-radius: calc(map_get($sizes-avatar, $size)/2);
+  }
+}

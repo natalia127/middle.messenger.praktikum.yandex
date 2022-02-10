@@ -1,14 +1,14 @@
 import { Block } from '../../core/Block';
-import { TPropsAndChildren } from '../../core/typeBlock';
+import { TPropsObject } from '../../core/typeBlock';
 
 export class Button extends Block {
-  constructor(props: TPropsAndChildren) {
+  constructor(props: TPropsObject) {
     const context = {
       value: '',
       class: ' '
     };
-    const newProps = { ...context, ...props };
-    super(newProps);
+    const data = { ...context, ...props };
+    super({ data });
   }
 
   render() {

@@ -1,12 +1,29 @@
 export const tmplSignIn: string = `
 
-  <form class="form" >
+  <form class="form" @submit="validateForm">
     <div class="form__title"> {{value}}</div>
     <div class="form__inputs">
-      {% inputLogin %}
-      {%  inputPassword %}     
-      {% button %}
-      <div class="form__text"><a href="{{SIGNUP}}">signUp</a></div>
+      <Input 
+        ::placeholder="Логин"
+        ::class="input--withBord form__input "
+        ::name='login'
+        @blur="validateInput"
+        @focus="validateInput"
+      />
+
+      <Input 
+        ::placeholder="пароль"
+        ::class="input--withBord form__input"
+        ::name='password'
+        ::type='password'
+        @blur="validateInput"
+        @focus="validateInput"
+      />   
+      <Button 
+        ::value='Войти'
+        ::class='form__button'
+      />
+      <div class="form__text"><a href="{{hrefSignUp}}">signUp</a></div>
     </div>
   </form>
 

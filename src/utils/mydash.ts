@@ -14,3 +14,11 @@ export function addStyle(allStyles: string, newStyle: string): string {
   }
   return result;
 }
+
+export function zipStr(str: string) {
+  return str.replace(' ', '');
+}
+
+export function isEqual(lhs, rhs) {
+  return lhs === rhs;
+}

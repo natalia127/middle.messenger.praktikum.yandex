@@ -1,6 +1,9 @@
-export type TCtx = {[key: string]: boolean | number | string| null| undefined }
+import { EDATA_PARAMS } from '../enumDataParams';
+export type TCtx = {
+  [key: string]: boolean | number | string | object | undefined,
 
-export type attribute = {
+}
+export type TAttribute = {
   value: string,
   key: string
 };
@@ -8,13 +11,14 @@ export type attribute = {
 export type TInfoTag = {
   // eslint-disable-next-line no-undef
   name: string,
-  attributes: attribute[]
+  attributes: TAttribute[]
 };
 
 export type TFullTInfoTag = TInfoTag & {
   indexEndInTmpl: number,
   content?: string,
-  typeTag: 'fullTag' | 'singleTag'
+  typeTag: 'fullTag' | 'singleTag',
+  isChild: boolean
 };
 
 export type TSettingsNode = TFullTInfoTag & {
@@ -32,3 +36,5 @@ export type TTemplatorStruct = {
   context: TCtx,
   children: TTemplatorStruct,
 }
+
+export type TDataMock = { key: string, value: string }[]

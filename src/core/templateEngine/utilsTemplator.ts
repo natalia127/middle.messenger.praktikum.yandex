@@ -1,32 +1,43 @@
 import { TCtx } from './typeTemplator';
 import {
-  attribute, TInfoTag, TFullTInfoTag, TSettingsNode, TSettingsTextNode
+  TAttribute, TInfoTag, TFullTInfoTag, TSettingsNode, TSettingsTextNode,
+  TDataMock
 } from './typeTemplator';
+import { EDATA_PARAMS } from '../enumDataParams';
 
 export function getPropertyCtx(obj: TCtx, path: string, defaultValue: unknown = ''): unknown {
   const keys = path.split('.');
 
-  let result = obj;
+  let result: unknown = obj;
+  let lastKey = null;
   keys.forEach((key)=> {
-    result = result[key];
+    lastKey = key;
+    result = (result as TCtx)[key];
   });
 
-  if (typeof result === 'number' && typeof result !== 'boolean' && typeof result !== 'string') {
+  if (typeof result === 'number' || typeof result === 'boolean' || typeof result === 'string') {
+    return result;
+  }
+  if (typeof result === 'function') {
     return result;
   }
   return defaultValue;
 }
 
-export function getAttributesTag(rawStr: string): attribute[] {
+export function getAttributesTag(rawStr: string): TAttribute[] {
   let _rawStr = rawStr;
-  const regFullAtrribute: RegExp = /(.+?)=\s*("|')(.+?)("|')/gi;
+
+  const regFullAtrribute: RegExp = /(.+?)=\s*(("|')(.+?)("|')|\w+)/gi;
   const attributes = [];
   let key = regFullAtrribute.exec(_rawStr);
+
   while (key) {
+    const value = key[4] || `%#${key[2]}`;
+
     attributes.push({
       fullStr: key[0],
       key: key[1].trim(),
-      value: key[3].trim()
+      value: value.trim()
     });
     key = regFullAtrribute.exec(_rawStr);
   }
@@ -73,7 +84,8 @@ export function getInfoSingleTag(tag: RegExpMatchArray): TFullTInfoTag {
     name,
     attributes,
     indexEndInTmpl: tag[0].length,
-    typeTag: 'singleTag'
+    typeTag: 'singleTag',
+    isChild: false
   };
   return result;
 }
@@ -103,18 +115,9 @@ export function getInfoFullTag(tag: RegExpMatchArray, rawStr: string): TFullTInf
     attributes,
     content,
     indexEndInTmpl,
-    typeTag: 'fullTag'
+    typeTag: 'fullTag',
+    isChild: false
   };
-}
-
-export function setAttributes(el: HTMLElement, attributes: attribute[]) {
-  attributes.forEach((att => {
-    if (att.key === 'class') {
-      att.value.split(' ').filter(a => a).forEach((className => el.classList.add(className)));
-    } else {
-      el.setAttribute(att.key, att.value);
-    }
-  }));
 }
 
 export function getTag(rawStr: string): TFullTInfoTag | null {
@@ -130,6 +133,10 @@ export function getTag(rawStr: string): TFullTInfoTag | null {
   } else if (openingTag && openingTag.index === 0) {
     result = getInfoFullTag(openingTag, rawStr);
   }
+  if (result) {
+    result.isChild = result?.name[0] === result?.name[0].toUpperCase();
+  }
+
   return result;
 }
 
@@ -141,26 +148,57 @@ export function getText(tmpl: string): string {
 
 export function getTSettingsNode(tmpl: string): TSettingsNode | TSettingsTextNode {
   const tag = getTag(tmpl);
-  let _TSettingsNode: TSettingsNode | TSettingsTextNode;
+  let _settingsNode: TSettingsNode | TSettingsTextNode;
   if (tag) {
-    _TSettingsNode = {
+    _settingsNode = {
       ...tag,
       typeEl: 'el',
       el: null
     };
-
-    if (tag.typeTag === 'singleTag') {
-      const singleEL: HTMLElement = document.createElement(tag.name);
-      setAttributes(singleEL, tag.attributes);
-      _TSettingsNode.el = singleEL;
-    }
   } else {
     const textContent: string = getText(tmpl);
-    _TSettingsNode = {
+    _settingsNode = {
       typeEl: 'text',
       content: textContent,
       indexEndInTmpl: textContent.length
     };
   }
-  return _TSettingsNode;
+  return _settingsNode;
+}
+
+// TODO T должен быть только одним из типов из EnumDataParamsf
+export const parseDataMock = function<T extends string> (
+  el: Element,
+  nameData: T
+): TDataMock | undefined {
+  const strParamsEvents = el.getAttribute(nameData);
+
+  if (!strParamsEvents) {
+    return;
+  }
+  const paramsEvents = strParamsEvents.split(';').filter(a=>a);
+
+  const result = paramsEvents.map((paramEvent: string) => {
+    const [key, value] = paramEvent.split(':');
+    return { key, value };
+  });
+  // eslint-disable-next-line consistent-return
+  return result;
+};
+
+export function markChildInTemplate(template: string) {
+  const regExpChild = /<([A-Z]\w+).[^/>]*?\/>/g;
+  let _template = template;
+  let key = regExpChild.exec(_template);
+
+  let i = 0;
+  while (key) {
+    const strReplace = key[0].replace(key[1], `${key[1]} ${EDATA_PARAMS.NUMBER_CHILD}="${i}" `);
+    _template = _template.replace(key[0], strReplace);
+    i++;
+    regExpChild.lastIndex = regExpChild.lastIndex - key[0].length + strReplace.length;
+    key = regExpChild.exec(_template);
+  }
+
+  return _template;
 }

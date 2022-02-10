@@ -1,56 +1,39 @@
-import listChat from '../../modules/listChat/listChat';
-import profileChat from '../../modules/profileChat/profileChat';
-import settingsChat from '../../modules/settingsChat/settingsChat';
-import screenChat from '../../modules/screenChat/screenChat';
+import { ListChat } from '../../modules/listChat/listChat';
+import { ProfileChat } from '../../modules/profileChat/profileChat';
+import { SettingsChat } from '../../modules/settingsChat/settingsChat';
+import { ScreenChat } from '../../modules/screenChat/screenChat';
 import { Block } from '../../core/Block';
-import { TPropsAndChildren } from '../../core/typeBlock';
-
+import { TPropsObject } from '../../core/typeBlock';
+import { chat } from './chat.tmpl';
 const iSetting = new URL('../../img/cog-outline.svg', import.meta.url);
 const iProfileChat = new URL('../../img/account-group.svg', import.meta.url);
-class Chat extends Block {
-  constructor(props: TPropsAndChildren) {
-    super(props);
+export class Chat extends Block {
+  constructor(props: TPropsObject) {
+    const info = {
+      data: {
+        iSetting: iSetting.href,
+        iProfileChat: iProfileChat.href,
+        classIcon: ' ',
+        isProfileChat: true,
+        ...props
+      },
+      components: {
+        ListChat,
+        ScreenChat,
+        ProfileChat,
+        SettingsChat
+      },
+      methods: {
+        handlerClick: function () {
+          let isProfileChat = !this.props.isProfileChat;
+          this.setProps({ isProfileChat });
+        }
+      }
+    };
+    super(info);
   }
 
   render(): string {
-    const chat: string = `<div class="chat row fullContainer">
-
-      <div class="chat__listChat">{% listChat %}</div>
-      <div class="fullContainer chat__screen">{% screenChat %}</div>
-      <div class="chat__profileChat">
-      <div class="js-icon chat__iSetting {{classIcon}}">
-        {% if isProfileChat %}
-          <img src="{{ iSetting }}" alt=" " />
-        {% else %}
-          <img src="{{ iProfileChat }}" alt=" " />
-        {% endif %}
-      </div>
-      {% if isProfileChat %}
-        {% profileChat %}
-      {% else %}
-        {% settingsChat %}
-      {% endif %}
-      </div>
-     </div>
-   `;
     return chat;
   }
 }
-export default ()=> (new Chat({
-  listChat: listChat(),
-  screenChat: screenChat(),
-  profileChat: profileChat(),
-  settingsChat: settingsChat(),
-  iSetting: iSetting.href,
-  iProfileChat: iProfileChat.href,
-  classIcon: ' ',
-  isProfileChat: true,
-  innerEvents: [{
-    selector: '.js-icon',
-    click: function () {
-      let isProfileChat = !this.props.isProfileChat;
-
-      this.setProps({ isProfileChat });
-    }
-  }]
-}));

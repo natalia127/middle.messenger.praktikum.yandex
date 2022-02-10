@@ -125,8 +125,6 @@ export const validateForm = function (e: Event, callback: Function) {
     }
   });
 
-  console.log(values);
-
   if (isFormValid && typeof callback === 'function') {
     callback();
   }

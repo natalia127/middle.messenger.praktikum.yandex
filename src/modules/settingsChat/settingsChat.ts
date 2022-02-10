@@ -1,17 +1,13 @@
 import { Block } from '../../core/Block';
-import { TPropsAndChildren } from '../../core/typeBlock';
+import { TPropsObject } from '../../core/typeBlock';
 import { settingsChat } from './settingsChat.tmpl';
 
-class SettingsChat extends Block {
-  constructor(props: TPropsAndChildren) {
-    super(props);
+export class SettingsChat extends Block {
+  constructor(props: TPropsObject) {
+    super({ data: props });
   }
 
   render() {
     return settingsChat;
   }
 }
-
-export default ()=> (new SettingsChat({
-
-}));

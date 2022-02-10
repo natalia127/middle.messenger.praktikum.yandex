@@ -1,20 +1,29 @@
-export type TEvents = { [key: string]: Function }
+interface Constructable<T> {
+  new(...args: any) : T;
+}
+export type TMethods = {
+  [key: string]: Function
+}
+
+export type TEvents = {
+  el: Element,
+  nameEvent: string,
+  nameHandler: string
+}[]
 export type TEventsInner =
 { [key: string]: Function | string,
   selector: string }[];
 
 export type TPropsObject = {
   [key: string]: boolean | number | string| null | Function| object| undefined,
-  events?: TEvents,
-  innerEvents?: TEventsInner
 }
 export interface IBlock {
   init(): void,
   dispatchComponentDidMount(): void,
   componentDidMount(): void,
   // eslint-disable-next-line no-unused-vars
-  setContent(content: HTMLElement): void,
-  getContent(): HTMLElement | DocumentFragment,
+  setContent(content: Element): void,
+  getContent(): Element | DocumentFragment,
   // eslint-disable-next-line no-unused-vars
   setProps(nextProps: TPropsObject): void,
   show(): void,
@@ -35,4 +44,13 @@ export type allPossibleProps = {
   props: TPropsObject,
   arrayProps: TListChildren
 }
-export type TPropsAndChildren = TPropsObject | TChildren;
+
+export type TComponents = {
+  [key: string]: Constructable<IBlock>
+}
+
+export type TInfo = {
+  methods?: TMethods,
+  data?: TPropsObject,
+  components?: TComponents
+}

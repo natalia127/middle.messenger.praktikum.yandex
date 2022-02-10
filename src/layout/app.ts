@@ -1,27 +1,43 @@
-import header from '../modules/header/header';
+import { Header } from '../modules/header/header';
 import { Block } from '../core/Block';
-import { TPropsAndChildren } from '../core/typeBlock';
+import { TPropsObject } from '../core/typeBlock';
+import { Router } from '../core/router/Router';
+import { getComponentTmpl, registerRouts } from '../core/router/routing';
 
-import { getComponentTmpl } from '../core/router/routing';
-
-let main = getComponentTmpl();
+const router = new Router('.js-router');
 
 class App extends Block {
-  constructor(props: TPropsAndChildren) {
+  constructor(props: TPropsObject) {
     super(props);
   }
 
+  componentDidMount(): void {
+    let Main = getComponentTmpl();
+  }
+
+  componentBeforeRendering(): void {
+    let Main = registerRouts();
+  }
+
   render() {
-    return `<div style="height: 100vh">
-           {% header %}
-           <div class="container fullContainer main">{% main %}</div>
+    return `
+    <div style="height: 100vh">
+      <Header @click="clickHandler"/>
+      <div class="container fullContainer main js-router">
+          
+      </div>   
    </div>`;
   }
 }
 
 export const app = new App(
   {
-    header,
-    main
+    components: {
+      Header
+
+    },
+    methods: {
+
+    }
   }
 );

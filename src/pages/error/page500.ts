@@ -1,9 +1,9 @@
-import { TPropsAndChildren } from '../../core/typeBlock';
+import { TPropsObject } from '../../core/typeBlock';
 import { Block } from '../../core/Block';
 
 export class Page500 extends Block {
-  constructor(props: TPropsAndChildren) {
-    super(props);
+  constructor(props: TPropsObject) {
+    super({ data: props });
   }
 
   render() {
@@ -14,5 +14,3 @@ export class Page500 extends Block {
   `;
   }
 }
-
-export default ()=> (new Page500({}));

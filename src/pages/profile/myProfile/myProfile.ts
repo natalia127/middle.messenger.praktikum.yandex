@@ -1,28 +1,37 @@
 import { Avatar } from '../../../components/avatar/avatar';
 import { template } from './myProfile.tmpl';
 import { Block } from '../../../core/Block';
-import { TPropsAndChildren } from '../../../core/typeBlock';
+import { TPropsObject } from '../../../core/typeBlock';
 
 import { context } from '../tempContext';
+import { Router } from '../../core/router/Router';
 
-class MyProfile extends Block {
-  constructor(props: TPropsAndChildren) {
-    super(props);
+export class MyProfile extends Block {
+  constructor(props: TPropsObject) {
+    const info = {
+      components: {
+        Avatar
+      },
+      data: {
+        ...context,
+        ...props
+      },
+      methods: {
+        goEditProfile: function () {
+
+        },
+        goEditPassword: function () {
+
+        },
+        goExit: function () {
+
+        }
+      }
+    };
+    super(info);
   }
 
   render() {
     return template;
   }
 }
-
-export default () => {
-  return new MyProfile({
-    ...context,
-    avatar: new Avatar({
-      size: '5em',
-      class: 'profile__avatar',
-      isChange: true
-    })
-
-  });
-};

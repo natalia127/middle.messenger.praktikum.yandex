@@ -29,12 +29,12 @@
   justify-content: center;
   align-items: center;
 
-  a {
+  &__link {
     color: $base-color;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-
+    cursor: pointer;
     &:active {
       color: $link-active-color;
     }

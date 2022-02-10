@@ -1,17 +1,18 @@
 import { Block } from '../../core/Block';
+import { TPropsObject } from '../../core/typeBlock';
 
 const context = {
   value: ' ',
-  placeholder: 'placehol88der',
+  placeholder: ' ',
   type: 'text',
   class: '',
   name: ' '
 };
 
 export class Input extends Block {
-  constructor(props) {
-    const newProps = { ...context, ...props };
-    super(newProps);
+  constructor(props: TPropsObject) {
+    const data = { ...context, ...props };
+    super({ data });
   }
 
   render() {
