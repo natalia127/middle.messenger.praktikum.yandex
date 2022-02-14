@@ -20,9 +20,7 @@ export class Avatar extends Block {
     return `
     <div class="avatar {{className}}"> 
       <img  class="avatar__img " src="{{srcImg}}"  />
-      {% if isChange %}
-        <div class="avatar__edit"></div>
-      {% endif %}
+      <div t-if="isChange" class="avatar__edit"></div>
     </div>`;
   }
 }

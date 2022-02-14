@@ -2,9 +2,9 @@ import { Avatar } from '../../../components/avatar/avatar';
 import { template } from './myProfile.tmpl';
 import { Block } from '../../../core/Block';
 import { TPropsObject } from '../../../core/typeBlock';
-
 import { context } from '../tempContext';
-import { Router } from '../../core/router/Router';
+import { router } from '../../../core/router/initRouter';
+import { EPATH } from '../../../core/router/namePath';
 
 export class MyProfile extends Block {
   constructor(props: TPropsObject) {
@@ -17,14 +17,14 @@ export class MyProfile extends Block {
         ...props
       },
       methods: {
-        goEditProfile: function () {
-
+        goEditProfile() {
+          router.go(EPATH.EDIT_PROFILE);
         },
-        goEditPassword: function () {
-
+        goEditPassword() {
+          router.go(EPATH.EDIT_PASSWORD);
         },
-        goExit: function () {
-
+        goExit() {
+          router.go(EPATH.SIGNIN);
         }
       }
     };

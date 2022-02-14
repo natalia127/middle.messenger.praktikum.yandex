@@ -1,7 +1,6 @@
 import { TCtx } from './typeTemplator';
 import {
-  TAttribute, TInfoTag, TFullTInfoTag, TSettingsNode, TSettingsTextNode,
-  TDataMock
+  TAttribute, TInfoTag, TFullTInfoTag, TSettingsNode, TSettingsTextNode
 } from './typeTemplator';
 import { EDATA_PARAMS } from '../enumDataParams';
 
@@ -165,26 +164,6 @@ export function getTSettingsNode(tmpl: string): TSettingsNode | TSettingsTextNod
   }
   return _settingsNode;
 }
-
-// TODO T должен быть только одним из типов из EnumDataParamsf
-export const parseDataMock = function<T extends string> (
-  el: Element,
-  nameData: T
-): TDataMock | undefined {
-  const strParamsEvents = el.getAttribute(nameData);
-
-  if (!strParamsEvents) {
-    return;
-  }
-  const paramsEvents = strParamsEvents.split(';').filter(a=>a);
-
-  const result = paramsEvents.map((paramEvent: string) => {
-    const [key, value] = paramEvent.split(':');
-    return { key, value };
-  });
-  // eslint-disable-next-line consistent-return
-  return result;
-};
 
 export function markChildInTemplate(template: string) {
   const regExpChild = /<([A-Z]\w+).[^/>]*?\/>/g;

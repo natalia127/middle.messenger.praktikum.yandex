@@ -1,10 +1,9 @@
 import { Header } from '../modules/header/header';
 import { Block } from '../core/Block';
 import { TPropsObject } from '../core/typeBlock';
-import { Router } from '../core/router/Router';
 import { getComponentTmpl, registerRouts } from '../core/router/routing';
-
-const router = new Router('.js-router');
+import { router } from '../core/router/initRouter';
+console.log(router);
 
 class App extends Block {
   constructor(props: TPropsObject) {
@@ -12,11 +11,11 @@ class App extends Block {
   }
 
   componentDidMount(): void {
-    let Main = getComponentTmpl();
+    getComponentTmpl();
   }
 
   componentBeforeRendering(): void {
-    let Main = registerRouts();
+    registerRouts();
   }
 
   render() {

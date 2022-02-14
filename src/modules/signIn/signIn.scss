@@ -34,10 +34,11 @@
   &__text {
     margin-top: 3em;
     text-align: center;
+  }
 
-    a {
-      text-decoration: none;
-      color: $aque;
-    }
+  &__link {
+    text-decoration: none;
+    color: $aque;
+    cursor: pointer;
   }
 }

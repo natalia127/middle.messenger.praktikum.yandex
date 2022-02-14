@@ -8,10 +8,11 @@ import {
   TInfo,
   TComponents
 } from './typeBlock';
-import { parseDataMock, markChildInTemplate } from './templateEngine/utilsTemplator';
+import { markChildInTemplate } from './templateEngine/utilsTemplator';
 import { EDATA_PARAMS } from './enumDataParams';
 import { zipStr } from '../utils/mydash';
 import { getElsForAttribute } from '../utils/dom';
+import { parseDataMock, getParametrsWithMock, getPropsWithMock } from './utilsBlock';
 
 enum EEVENTS {
   INIT = 'init',
@@ -159,6 +160,7 @@ export abstract class Block implements IBlock {
 
   private _render(): void {
     let template: string = this.render();
+
     if (!this.zipTemplate) {
       this.setZipTemplate(template);
     }
@@ -175,36 +177,79 @@ export abstract class Block implements IBlock {
     }).compile();
 
     content.setAttribute(EDATA_PARAMS.BLOCK_ID, this.id);
-    this.replaceMockEvents(content);
-    this.replaceMockOnChild(content);
-    this.replaceMockProps(content);
+    this.replaceMock(content);
 
     this.element.appendChild(content);
+
+    this.setContent(content);
+  }
+
+  private replaceMock(content: Element) {
+    this.replaceMockEvents(content);
+    this.replaceMockCondition(content);
+    this.replaceMockOnChild(content);
+    this.replaceMockProps(content);
+  }
+
+  private replaceMockCondition(content) {
+    const allElWithIf = getElsForAttribute(content, EDATA_PARAMS.CONDITION_IF);
+    allElWithIf.forEach((el: Element) => {
+      const condition = el.getAttribute(EDATA_PARAMS.CONDITION_IF);
+      if (!condition) {
+        return;
+      }
+
+      let valueCondition = this.props[condition] || this.methods[condition];
+      const callbackIf = (result)=>{
+        if (result) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      };
+      const callbackElse = (result)=>{
+        if (result) {
+          nextSibling.classList.add('hidden');
+        } else {
+          nextSibling.classList.remove('hidden');
+        }
+      };
+      callbackIf(!!valueCondition);
+
+      if (typeof valueCondition === 'function') {
+        this.wrapMethod(condition, callbackIf);
+      }
+      const nextSibling = el.nextElementSibling;
+      if (nextSibling?.hasAttribute(EDATA_PARAMS.CONDITION_ELSE)) {
+        callbackElse(!!valueCondition);
+        if (typeof valueCondition === 'function') {
+          this.wrapMethod(condition, callbackElse);
+        }
+      }
+    });
+  }
+
+  private wrapMethod(nameMethod, callBack) {
+    const f = this.methods[nameMethod];
+    this.methods[nameMethod] = function () {
+      let result = f();
+      callBack(result);
+    };
   }
 
   private replaceMockProps(content: Element) {
     const allElWithProps = getElsForAttribute(content, EDATA_PARAMS.PROPS);
 
-    allElWithProps.forEach((el)=>{
-      const rawPropsChild = parseDataMock(el, EDATA_PARAMS.PROPS);
-      const propsChild = rawPropsChild ? rawPropsChild.reduce((
-        acc: {[key: string]: string},
-        prop
-      )=>{
-        const { key: nameProp, value } = prop;
-        acc[nameProp] = value;
-        return acc;
-      }, {}) : {};
+    allElWithProps.forEach((el: Element)=>{
+      const propsChild = getPropsWithMock(el);
+
       Object.entries(propsChild).forEach(([key, value]) => {
         let valueAttr = this.props[value] || this.methods[value];
         if (typeof valueAttr === 'function') {
           valueAttr = this.methods[value]();
-          const f = this.methods[value];
-          this.methods[value] = function () {
-            let result = f();
+          this.wrapMethod(value, (result)=>{
             el.setAttribute(key, result);
-          };
-          // this.props.value = valueAttr;
+          });
         }
         if (valueAttr) {
           el.setAttribute(key, valueAttr);
@@ -214,28 +259,18 @@ export abstract class Block implements IBlock {
   }
 
   private replaceMockOnChild(content: Element) {
-    const stubChildren = content.querySelectorAll(`[${EDATA_PARAMS.CHILD}]`);
+    const stubsChildren = getElsForAttribute(content, EDATA_PARAMS.CHILD);
 
-    Array.from(stubChildren).forEach(stubChild => {
-      const nameChild = stubChild.getAttribute(EDATA_PARAMS.CHILD);
-      const nChild = stubChild.getAttribute(EDATA_PARAMS.NUMBER_CHILD);
-      const paramsEvents = parseDataMock(stubChild, EDATA_PARAMS.EVENTS);
-      let rawPropsChild = parseDataMock(stubChild, EDATA_PARAMS.PROPS);
-
-      const propsChild = rawPropsChild ? rawPropsChild.reduce((
-        acc: {[key: string]: string},
-        prop
-      )=>{
-        const { key: nameProp, value } = prop;
-        acc[nameProp] = value;
-        return acc;
-      }, {}) : {};
+    stubsChildren.forEach((stubChild: Element) => {
+      const {
+        nameChild, nChild, paramsEvents, propsChild
+      } = getParametrsWithMock(stubChild);
 
       if (!nChild || !nameChild || (nameChild && !this.innerComponents[nameChild])) {
         return;
       }
-      let child: IBlock;
 
+      let child: IBlock;
       if (this.children[nChild]) {
         // TO DO сделать обновление пропсов по необходимости
         child = this.children[nChild];
@@ -244,28 +279,21 @@ export abstract class Block implements IBlock {
         this.children[nChild] = child;
       }
 
-      this.replaceWith(child, stubChild, content);
+      this.replaceWith(stubChild, child, content);
       if (paramsEvents) {
-        this.setRootEvents(child.getContent() as Element, paramsEvents);
+        this.setEvents(child.getContent() as Element, paramsEvents);
       }
     });
   }
 
-  replaceWith(target: IBlock, stub: Element, content: Element) {
-    stub.replaceWith(target.getContent());
-    const targetContent = content.querySelector(`[${EDATA_PARAMS.BLOCK_ID}="${target.getId()}"]`);
-    if (targetContent) {
-      target.setContent(targetContent);
-    }
+  replaceWith(stub: Element, block: IBlock, shellContent: Element) {
+    stub.replaceWith(block.getContent());
   }
 
-  private setRootEvents(el: Element, paramsEvents: TDataMock) {
+  private setEvents(el: Element, paramsEvents: TDataMock) {
     paramsEvents.forEach((paramEvent)=>{
       const { key: nameEvent, value: nameHandler } = paramEvent;
-      if (!this.props.methods) {
-        return;
-      }
-      const handler = this.props.methods[nameHandler];
+      const handler = this.methods[nameHandler];
 
       if (handler) {
         this.events.push({ el, nameEvent, nameHandler });
@@ -275,28 +303,15 @@ export abstract class Block implements IBlock {
   }
 
   private replaceMockEvents(el: Element) {
-    const elsWithEvent = Array.from(el.querySelectorAll(`[${EDATA_PARAMS.EVENTS}]`));
-    const rootEvent = el.hasAttribute(EDATA_PARAMS.EVENTS);
-    if (rootEvent) {
-      elsWithEvent.push(el);
-    }
+    const elsWithEvent = getElsForAttribute(el, EDATA_PARAMS.EVENTS);
 
-    if (!elsWithEvent.length) {
-      return;
-    }
-
-    elsWithEvent.forEach((_el)=> {
-      const strParamsEvents = _el.getAttribute(EDATA_PARAMS.EVENTS);
-      if (!strParamsEvents || !this.methods) {
+    elsWithEvent.forEach((_el: Element)=> {
+      const paramsEvents = parseDataMock(_el as Element, EDATA_PARAMS.EVENTS);
+      if (!paramsEvents) {
         return;
       }
-      const paramsEvents = strParamsEvents.split(';').filter(a=>a);
       paramsEvents.forEach((paramEvent)=>{
-        const [nameEvent, nameHandler] = paramEvent.split(':');
-        if (!this.methods) {
-          return;
-        }
-
+        const { key: nameEvent, value: nameHandler } = paramEvent;
         const handler = this.methods[nameHandler];
 
         if (handler) {
@@ -318,12 +333,9 @@ export abstract class Block implements IBlock {
 
   private removeEvents(): void {
     this.events.forEach(paramsEvent => {
-      if (!this.props.methods) {
-        return;
-      }
       paramsEvent.el.removeEventListener(
         paramsEvent.nameEvent,
-        this.props.methods[paramsEvent.nameHandler] as (e: Event)=> void
+        this.methods[paramsEvent.nameHandler] as (e: Event)=> void
       );
     });
   }
@@ -354,14 +366,18 @@ export abstract class Block implements IBlock {
   }
 
   show(): void {
-    if (this.content instanceof Element) {
-      this.content.classList.remove('hidden');
+    const content = this.getContent();
+
+    if (content instanceof Element) {
+      content.classList.remove('hidden');
     }
   }
 
   hide(): void {
-    if (this.content instanceof Element) {
-      this.content.classList.add('hidden');
+    const content = this.getContent();
+
+    if (content instanceof Element) {
+      content.classList.add('hidden');
     }
   }
 

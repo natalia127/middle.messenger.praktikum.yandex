@@ -23,7 +23,7 @@ export const tmplSignIn: string = `
         ::value='Войти'
         ::class='form__button'
       />
-      <div class="form__text"><a href="{{hrefSignUp}}">signUp</a></div>
+      <div class="form__text"><span class="form__link" @click="goSignUp">signUp</span></div>
     </div>
   </form>
 

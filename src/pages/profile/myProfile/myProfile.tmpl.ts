@@ -33,9 +33,9 @@ export const template: string = `<div class="col-lg-12 wrapper-center">
     </div>
 
     <div class="profile__actions">
-      <div class="profile__action profile__edit"><a href="${EDIT_PROFILE}">Изменить данные</a></div>
-      <div class="profile__action profile__edit" ><a href="${EDIT_PASSWORD}">Изменить пароль</a></div>
-      <div class="profile__action profile__exit"><a href="${SIGNIN}">Выйти</a></div>
+      <div class="profile__action profile__edit"><span @click="goEditProfile">Изменить данные</span></div>
+      <div class="profile__action profile__edit" ><span @click="goEditPassword">Изменить пароль</span></div>
+      <div class="profile__action profile__exit"><span @click="goExit">Выйти</span></div>
     </div>
   </div>
 

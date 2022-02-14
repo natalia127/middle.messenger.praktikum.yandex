@@ -128,10 +128,10 @@ export class Templator {
       if (att.key === 'class') {
         att.value.split(' ').filter(a => a).forEach((className => el.classList.add(className)));
       } else if (att.key.startsWith('@')) {
-        const paramsEvents = el.getAttribute('data-events') || '';
-        el.setAttribute('data-events', `${paramsEvents}${att.key.slice(1)}:${att.value};`);
+        const paramsEvents = el.getAttribute(EDATA_PARAMS.EVENTS) || '';
+        el.setAttribute(EDATA_PARAMS.EVENTS, `${paramsEvents}${att.key.slice(1)}:${att.value};`);
       } else if (att.key.startsWith('::')) {
-        const paramsProps = el.getAttribute('data-props') || '';
+        const paramsProps = el.getAttribute(EDATA_PARAMS.PROPS) || '';
         let value = att.value;
         if (value.startsWith('%#')) {
           const key = value.slice(2);
@@ -140,7 +140,11 @@ export class Templator {
             value = key;
           }
         }
-        el.setAttribute('data-props', `${paramsProps}${att.key.slice(2)}:${value};`);
+        el.setAttribute(EDATA_PARAMS.PROPS, `${paramsProps}${att.key.slice(2)}:${value};`);
+      } else if (att.key === 't-if') {
+        el.setAttribute(EDATA_PARAMS.CONDITION_IF, att.value);
+      } else if (att.key === 't-else') {
+        el.setAttribute(EDATA_PARAMS.CONDITION_ELSE, att.value);
       } else {
         el.setAttribute(att.key, att.value);
       }

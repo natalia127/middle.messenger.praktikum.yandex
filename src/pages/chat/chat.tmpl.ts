@@ -4,17 +4,18 @@ export const chat: string = `<div class="chat row fullContainer">
   <div class="fullContainer chat__screen"><ScreenChat /></div>
   <div class="chat__profileChat">
     <div class="chat__iSetting {{classIcon}}" @click="handlerClick">
-      {% if isProfileChat %}
-        <img src="{{ iSetting }}" alt=" " />
-      {% else %}
-        <img src="{{ iProfileChat }}" alt=" " />
-      {% endif %}
+
+        <img t-if="isProfileChat" src="{{ iSetting }}" alt=" " />
+
+        <img t-else=" " src="{{ iProfileChat }}" alt=" " />
+
     </div>
-    {% if isProfileChat %}
+    <div t-if="isProfileChat" class="chat__infoChat">
       <ProfileChat />
-    {% else %}
+    </div>
+    <div t-else=" " class="chat__infoChat">
       <SettingsChat />
-    {% endif %}
+    </div>
   </div>
 
   </div>

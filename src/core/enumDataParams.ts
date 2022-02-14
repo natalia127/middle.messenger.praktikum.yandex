@@ -3,5 +3,7 @@ export enum EDATA_PARAMS {
   NUMBER_CHILD = 'data-n-child',
   EVENTS = 'data-events',
   BLOCK_ID = 'data-t-id',
-  PROPS = 'data-props'
+  PROPS = 'data-props',
+  CONDITION_IF = 'data-if',
+  CONDITION_ELSE = 'data-else',
 }

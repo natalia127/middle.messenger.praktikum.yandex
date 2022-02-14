@@ -9,7 +9,7 @@ export class Router {
     this.history = window.history;
     this._currentRoute = null;
     this._rootQuery = rootQuery;
-
+    this.after = [];
     Router.__instance = this;
   }
 
@@ -22,6 +22,7 @@ export class Router {
   start() {
     window.onpopstate = event => {
       this._onRoute(event.currentTarget.location.pathname);
+      this.startAfter();
     };
 
     this._onRoute(window.location.pathname);
@@ -44,6 +45,7 @@ export class Router {
   go(pathname) {
     this.history.pushState({}, '', pathname);
     this._onRoute(pathname);
+    this.startAfter();
   }
 
   back() {
@@ -61,5 +63,13 @@ export class Router {
   getCurrentPath() {
     const result = this._currentRoute ? this._currentRoute._pathname : window.location.pathname;
     return result;
+  }
+
+  addAfterCallback(f) {
+    this.after.push(f);
+  }
+
+  startAfter() {
+    this.after.forEach(f=>f());
   }
 }
