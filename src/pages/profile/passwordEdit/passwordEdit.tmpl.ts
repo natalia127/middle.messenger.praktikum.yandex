@@ -1,4 +1,4 @@
-export const template: string = `<form class="col-lg-12 wrapper-center"  @submit="validateForm">
+export const template: string = `<form class="col-lg-12 wrapper-center"  @submit="handlerForm">
     <div class="profile">
       <div class="profile__img"></div>
       <div class="profile__titleName">{{ first_name }}</div>
@@ -9,8 +9,7 @@ export const template: string = `<form class="col-lg-12 wrapper-center"  @submit
             ::class="input--outbord"
             ::name='oldPassword'
             ::type='password'
-            @blur="validateInput"
-            @focus="validateInput"
+            ::needValidate="true"
           />
   
         </div>
@@ -20,8 +19,7 @@ export const template: string = `<form class="col-lg-12 wrapper-center"  @submit
             ::class="input--outbord"
             ::name='newPassword'
             ::type='password'
-            @blur="validateInput"
-            @focus="validateInput"
+            ::needValidate="true"
           />
         </div>
         <div class="profile__item">
@@ -30,14 +28,11 @@ export const template: string = `<form class="col-lg-12 wrapper-center"  @submit
             ::class="input--outbord"
             ::name='repeatPassword'
             ::type='password'
-            @blur="validateInput"
-            @focus="validateInput"
+            ::needValidate="true"
           />
         </div>
-
-
-
       </div>
+      <div class="form__errorSendMessage">{{ errorMessageChange }}</div>
       
       <div class="profile__actions profile__actions--center">
         <Button 

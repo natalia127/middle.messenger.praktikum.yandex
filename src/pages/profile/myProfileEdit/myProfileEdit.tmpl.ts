@@ -1,6 +1,4 @@
-import { CHAT } from '../../../core/router/namePath';
-
-export const template: string = `<form class="col-lg-12 wrapper-center" @submit="validateForm">
+export const template: string = `<form class="col-lg-12 wrapper-center" @submit="handlerForm">
     <div class="profile">
       <div class="profile__img"></div>
       <div class="profile__titleName">{{ first_name }}</div>
@@ -13,8 +11,7 @@ export const template: string = `<form class="col-lg-12 wrapper-center" @submit=
             ::name='email'
             ::type='email'
             ::value=email
-            @blur="validateInput"
-            @focus="validateInput"
+            ::needValidate="true"
           />
         </div>
         <div class="profile__item">
@@ -24,8 +21,7 @@ export const template: string = `<form class="col-lg-12 wrapper-center" @submit=
             ::class="input--outbord"
             ::name='login'
             ::value=login
-            @blur="validateInput"
-            @focus="validateInput"
+            ::needValidate="true"
           />
         </div>
         <div class="profile__item">
@@ -35,8 +31,7 @@ export const template: string = `<form class="col-lg-12 wrapper-center" @submit=
             ::class="input--outbord"
             ::name='display_name'
             ::value=display_name
-            @blur="validateInput"
-            @focus="validateInput"
+            ::needValidate="true"
           />
         </div>
         <div class="profile__item">
@@ -46,8 +41,7 @@ export const template: string = `<form class="col-lg-12 wrapper-center" @submit=
             ::class="input--outbord"
             ::name='first_name'
             ::value=first_name
-            @blur="validateInput"
-            @focus="validateInput"
+            ::needValidate="true"
           />
         </div>
         <div class="profile__item">
@@ -57,8 +51,7 @@ export const template: string = `<form class="col-lg-12 wrapper-center" @submit=
             ::class="input--outbord"
             ::name='second_name'
             ::value=second_name
-            @blur="validateInput"
-            @focus="validateInput"
+            ::needValidate="true"
           />
         </div>
         <div class="profile__item">
@@ -69,20 +62,19 @@ export const template: string = `<form class="col-lg-12 wrapper-center" @submit=
             ::name='phone'
             ::type='number'
             ::value=phone
-            @blur="validateInput"
-            @focus="validateInput"
+            ::needValidate="true"
           />
         </div>
 
       </div>
-      
+      <div class="form__errorSendMessage">{{ errorMessageChange }}</div>
       <div class="profile__actions profile__actions--center">
-        <a href="${CHAT}">
-          <Button 
-          ::value='Сохранить'
-          ::class='form__button'
-          />
-        </a>
+
+        <Button 
+        ::value='Сохранить'
+        ::class='form__button '
+        />
+
       </div>
     </div>
     

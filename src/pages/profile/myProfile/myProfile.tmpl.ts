@@ -1,8 +1,13 @@
-import { SIGNIN, EDIT_PROFILE, EDIT_PASSWORD } from '../../../core/router/namePath';
-
-export const template: string = `<div class="col-lg-12 wrapper-center">
+export const template: string = `<div 
+  class="col-lg-12 wrapper-center"
+  @handlerClickAvatar="handlerSendFile"
+>
   <div class="profile">
-    <Avatar ::isChange="true" ::className="profile__avatar avatar-xl"/>
+    <Avatar 
+    ::isChange="true" 
+    ::className="profile__avatar avatar-xl"
+    ::srcImg=pathAvatar
+    />
     <div class="profile__titleName">{{ first_name }}</div>
     <div class="profile__info">
       <div class="profile__item">

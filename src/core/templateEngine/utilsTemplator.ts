@@ -26,13 +26,12 @@ export function getPropertyCtx(obj: TCtx, path: string, defaultValue: unknown = 
 export function getAttributesTag(rawStr: string): TAttribute[] {
   let _rawStr = rawStr;
 
-  const regFullAtrribute: RegExp = /(.+?)=\s*(("|')(.+?)("|')|\w+)/gi;
+  const regFullAtrribute: RegExp = /(.+?)=\s*(("|')(.*?)("|')|\w+)/gi;
   const attributes = [];
   let key = regFullAtrribute.exec(_rawStr);
 
   while (key) {
-    const value = key[4] || `%#${key[2]}`;
-
+    const value = key[4] || key[4] === '' ? key[4] : `%withContext#${key[2]}`;
     attributes.push({
       fullStr: key[0],
       key: key[1].trim(),
@@ -166,7 +165,7 @@ export function getTSettingsNode(tmpl: string): TSettingsNode | TSettingsTextNod
 }
 
 export function markChildInTemplate(template: string) {
-  const regExpChild = /<([A-Z]\w+).[^/>]*?\/>/g;
+  const regExpChild = /<([A-Z]\w+).[^>]*?\/>/g;
   let _template = template;
   let key = regExpChild.exec(_template);
 

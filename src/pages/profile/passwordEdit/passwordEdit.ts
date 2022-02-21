@@ -1,14 +1,15 @@
 import { Input } from '../../../components/input/input';
 import { Button } from '../../../components/button/button';
-import { context } from '../tempContext';
-import { Block } from '../../../core/Block';
-import { TPropsObject } from '../../../core/typeBlock';
-import { validateForm, validateInput } from '../../../utils/validate';
+import { Block } from '../../../core/block/Block';
+import { TPropsObject } from '../../../core/block/typeBlock';
+import { validateAndSend } from '../../../core/utils/validate';
 import { template } from './passwordEdit.tmpl';
+import { userController } from '../../../core/controllers/userController';
+import { getWithUserDate } from '../../../hoc/getWithUserDate';
 
-export class PasswordEdit extends Block {
+class FormPasswordEdit extends Block {
   constructor(props: TPropsObject) {
-    const data = { ...context, ...props };
+    const data = { ...props };
     super({
       data,
       components: {
@@ -16,8 +17,10 @@ export class PasswordEdit extends Block {
         Button
       },
       methods: {
-        validateForm,
-        validateInput
+        handlerForm(e: Event) {
+          e.preventDefault();
+          validateAndSend(this, userController, 'changePassword');
+        }
       }
     });
   }
@@ -26,3 +29,4 @@ export class PasswordEdit extends Block {
     return template;
   }
 }
+export const PasswordEdit = getWithUserDate(FormPasswordEdit);

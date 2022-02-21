@@ -1,10 +1,16 @@
-import { ListChat } from '../../modules/listChat/listChat';
-import { ProfileChat } from '../../modules/profileChat/profileChat';
-import { SettingsChat } from '../../modules/settingsChat/settingsChat';
-import { ScreenChat } from '../../modules/screenChat/screenChat';
-import { Block } from '../../core/Block';
-import { TPropsObject } from '../../core/typeBlock';
+import { ListChat } from './listChat/listChat';
+import { ProfileChat } from './profileChat/profileChat';
+import { SettingsChat } from './settingsChat/settingsChat';
+import { ScreenChat } from './screenChat/screenChat';
+import { Block } from '../../core/block/Block';
+import { TPropsObject } from '../../core/block/typeBlock';
 import { chat } from './chat.tmpl';
+import { AddChat } from './addChat/addChat';
+import { AddUserChat } from './addUserChat/AddUserChat';
+import { DelUserChat } from './delUserChat/delUserChat';
+import { DelChat } from './delChat/delChat';
+import { Blackout } from '../../components/blackout/blackout';
+import { chatController } from '../../core/controllers/chatController';
 const iSetting = new URL('../../img/cog-outline.svg', import.meta.url);
 const iProfileChat = new URL('../../img/account-group.svg', import.meta.url);
 export class Chat extends Block {
@@ -15,18 +21,76 @@ export class Chat extends Block {
         iProfileChat: iProfileChat.href,
         classIcon: ' ',
         isProfileChat: true,
+        idActiveChat: null,
+        nameActiveChat: null,
+        needAddChat: false,
+        needAddUserChat: false,
+        needBlackout: false,
+        needDelUserChat: false,
+        needDelChat: false,
+        loginDelChat: '',
+        idDelUser: null,
         ...props
       },
       components: {
         ListChat,
         ScreenChat,
         ProfileChat,
-        SettingsChat
+        SettingsChat,
+        AddChat,
+        Blackout,
+        AddUserChat,
+        DelUserChat,
+        DelChat
       },
       methods: {
-        handlerClick: function () {
+        changeScreenInfoChat() {
           let isProfileChat = !this.props.isProfileChat;
           this.setProps({ isProfileChat });
+        },
+        showAddChat() {
+          this.setProps({
+            needAddChat: true,
+            needBlackout: true
+          });
+        },
+        showAddUserChat() {
+          this.setProps({
+            needAddUserChat: true,
+            needBlackout: true
+          });
+        },
+        showDelUserChat(e: CustomEvent) {
+          this.setProps({
+            needDelUserChat: true,
+            needBlackout: true,
+            loginDelChat: e.detail.login,
+            idDelUser: e.detail.idUser
+          });
+        },
+        showDelChat() {
+          this.setProps({
+            needDelChat: true,
+            needBlackout: true
+          });
+        },
+        hideModal() {
+          this.setProps({
+            needAddChat: false,
+            needBlackout: false,
+            needAddUserChat: false,
+            needDelUserChat: false,
+            needDelChat: false
+          });
+        },
+        selectChat(e: CustomEvent) {
+          const idChat = e.detail.idChat;
+          chatController.getUsersChat(idChat);
+
+          this.setProps({
+            idActiveChat: idChat,
+            nameActiveChat: e.detail.nameChat
+          });
         }
       }
     };

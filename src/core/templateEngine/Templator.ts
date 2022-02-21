@@ -4,6 +4,8 @@ import {
   TCtx, TAttribute
 } from './typeTemplator';
 import { EDATA_PARAMS } from '../enumDataParams';
+export const charSeparate = '##';
+
 export class Templator {
   TEMPLATE_REGEXP = /\{\{([^}}].*?)\}\}/gi;
 
@@ -129,18 +131,21 @@ export class Templator {
         att.value.split(' ').filter(a => a).forEach((className => el.classList.add(className)));
       } else if (att.key.startsWith('@')) {
         const paramsEvents = el.getAttribute(EDATA_PARAMS.EVENTS) || '';
-        el.setAttribute(EDATA_PARAMS.EVENTS, `${paramsEvents}${att.key.slice(1)}:${att.value};`);
+        el.setAttribute(EDATA_PARAMS.EVENTS, `${paramsEvents}${att.key.slice(1)}${charSeparate}${att.value};`);
       } else if (att.key.startsWith('::')) {
         const paramsProps = el.getAttribute(EDATA_PARAMS.PROPS) || '';
         let value = att.value;
-        if (value.startsWith('%#')) {
-          const key = value.slice(2);
+        if (value.startsWith('%withContext#')) {
+          const key = value.slice('%withContext#'.length);
           value = this.ctx[key];
           if (typeof value === 'function') {
             value = key;
           }
         }
-        el.setAttribute(EDATA_PARAMS.PROPS, `${paramsProps}${att.key.slice(2)}:${value};`);
+        if (!value) {
+          return;
+        }
+        el.setAttribute(EDATA_PARAMS.PROPS, `${paramsProps}${att.key.slice(2)}${charSeparate}${value};`);
       } else if (att.key === 't-if') {
         el.setAttribute(EDATA_PARAMS.CONDITION_IF, att.value);
       } else if (att.key === 't-else') {

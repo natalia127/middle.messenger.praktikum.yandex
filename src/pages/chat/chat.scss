@@ -1,3 +1,9 @@
+@import "./screenChat/screenChat.scss";
+@import "./listChat/listChat.scss";
+@import "./profileChat/profileChat.scss";
+@import "./settingsChat/settingsChat.scss";
+@import "./addChat/addChat.scss";
+
 .chat {
   box-shadow: $base-box-shadow;
 
@@ -28,7 +34,20 @@
       right: 20em;
     }
   }
+
   &__infoChat {
     height: 100%;
   }
+
+  &__addChat {
+    position: absolute;
+    z-index: 5;
+    margin: auto;
+    top: 30%;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 20%;
+  }
 }
+

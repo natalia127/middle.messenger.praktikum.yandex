@@ -1,5 +1,5 @@
-import { TPropsObject } from '../../core/typeBlock';
-import { Block } from '../../core/Block';
+import { TPropsObject } from '../../core/block/typeBlock';
+import { Block } from '../../core/block/Block';
 
 export class Page404 extends Block {
   constructor(props: TPropsObject) {

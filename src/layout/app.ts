@@ -1,21 +1,17 @@
-import { Header } from '../modules/header/header';
-import { Block } from '../core/Block';
+import { Header } from '../components/header/header';
+import { Block } from '../core/block/Block';
 import { TPropsObject } from '../core/typeBlock';
 import { getComponentTmpl, registerRouts } from '../core/router/routing';
-import { router } from '../core/router/initRouter';
-console.log(router);
-
+import { authController } from '../core/controllers/authController';
 class App extends Block {
   constructor(props: TPropsObject) {
     super(props);
+    authController.authorization();
+    registerRouts();
   }
 
   componentDidMount(): void {
     getComponentTmpl();
-  }
-
-  componentBeforeRendering(): void {
-    registerRouts();
   }
 
   render() {

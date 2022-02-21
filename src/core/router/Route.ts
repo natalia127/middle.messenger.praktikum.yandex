@@ -1,39 +1,53 @@
-import { isEqual } from '../../utils/mydash';
-import { render } from '../../utils/renderDOM';
+import { isEqualString } from '../utils/mydash';
+import { render } from '../utils/renderDOM';
+import {
+  Constructable, IBlock
+} from '../../core/typeBlock';
+import { IRoute } from './typeRouting';
+export class Route implements IRoute {
+  private pathname: string;
 
-export class Route {
-  constructor(pathname, view, props) {
-    this._pathname = pathname;
-    this._blockClass = view;
-    this._block = null;
-    this._props = props;
+  private BlockClass: Constructable<IBlock>;
+
+  private block: IBlock;
+
+  private props: {[key: string]: any};
+
+  constructor(pathname: string, view: Constructable<IBlock>, props: {[key: string]: any}) {
+    this.pathname = pathname;
+    this.BlockClass = view;
+    this.props = props;
   }
 
-  navigate(pathname) {
+  navigate(pathname: string) {
     if (this.match(pathname)) {
-      this._pathname = pathname;
+      this.pathname = pathname;
       this.render();
     }
   }
 
   leave() {
-    if (this._block) {
-      this._block.hide();
+    if (this.block) {
+      this.block.hide();
     }
   }
 
-  match(pathname) {
-    return isEqual(pathname, this._pathname);
+  match(pathname: string) {
+    return isEqualString(pathname, this.pathname);
   }
 
   render() {
-    if (!this._block) {
-      this._block = new this._blockClass();
+    if (!this.block) {
+      this.block = new this.BlockClass();
 
-      render(this._props.rootQuery, this._block);
+      render(this.props.rootQuery, this.block);
       return;
     }
 
-    this._block.show();
+    this.block.show();
+  }
+
+  getPathname() {
+    return this.pathname;
   }
 }

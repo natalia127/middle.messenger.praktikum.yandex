@@ -1,6 +1,6 @@
 import { EDATA_PARAMS } from '../enumDataParams';
 export type TCtx = {
-  [key: string]: boolean | number | string | object | undefined,
+  [key: string]: any
 
 }
 export type TAttribute = {
@@ -33,8 +33,7 @@ export type TSettingsTextNode = {
 
 export type TTemplatorStruct = {
   template: string,
-  context: TCtx,
-  children: TTemplatorStruct,
+  context: TCtx
 }
 
-export type TDataMock = { key: string, value: string }[]
+export type TDataMock = TAttribute[]

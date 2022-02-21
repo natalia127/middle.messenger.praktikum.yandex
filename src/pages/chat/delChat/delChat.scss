@@ -1,0 +1,10 @@
+.add-chat {
+  background-color: $base-color;
+  padding: 2em;
+  border-radius: 1em;
+
+  &__button {
+    margin: auto;
+    margin-top: 2em;
+  }
+}

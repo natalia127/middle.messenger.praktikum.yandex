@@ -1,16 +1,24 @@
 import { Input } from '../../../components/input/input';
-import { Block } from '../../../core/Block';
+import { Block } from '../../../core/block/Block';
 
 import { Button } from '../../../components/button/button';
-import { context } from '../tempContext';
-import { TPropsObject } from '../../../core/typeBlock';
+import { TPropsObject } from '../../../core/block/typeBlock';
 import { template } from './myProfileEdit.tmpl';
-import { validateForm, validateInput } from '../../../utils/validate';
-export class MyProfileEdit extends Block {
+import { validateAndSend } from '../../../core/utils/validate';
+import { userStore } from '../../../core/store/UserStore';
+import { userController } from '../../../core/controllers/userController';
+import { StoreEvents } from '../../../core/store/StoreBase';
+import { getWithUserDate } from '../../../hoc/getWithUserDate';
+class FormMyProfileEdit extends Block {
   constructor(props: TPropsObject) {
+    const dataUser = userStore.getState();
+
+    userStore.on(StoreEvents.Updated, ()=> {
+      this.setProps(userStore.getState());
+    });
     const info = {
       data: {
-        ...context,
+        ...dataUser,
         ...props
       },
       components: {
@@ -18,8 +26,10 @@ export class MyProfileEdit extends Block {
         Button
       },
       methods: {
-        validateInput,
-        validateForm
+        handlerForm(e: Event) {
+          e.preventDefault();
+          validateAndSend(this, userController, 'changeUser');
+        }
       }
     };
     super(info);
@@ -29,3 +39,5 @@ export class MyProfileEdit extends Block {
     return template;
   }
 }
+
+export const MyProfileEdit = getWithUserDate(FormMyProfileEdit);

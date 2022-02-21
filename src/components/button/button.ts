@@ -1,4 +1,4 @@
-import { Block } from '../../core/Block';
+import { Block } from '../../core/block/Block';
 import { TPropsObject } from '../../core/typeBlock';
 
 export class Button extends Block {
@@ -7,12 +7,19 @@ export class Button extends Block {
       value: '',
       class: ' '
     };
-    const data = { ...context, ...props };
-    super({ data });
+    const info = {
+      data: { ...context, ...props },
+      methods: {
+        handlerSubmit(e: Event) {
+          e.preventDefault();
+        }
+      }
+    };
+    super(info);
   }
 
   render() {
     return `
-     <button class="{{class}} button" >{{value}}</button>`;
+     <button class="button {{class}} ">{{value}}</button>`;
   }
 }

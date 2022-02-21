@@ -1,6 +1,6 @@
-import { SignIn } from '../../modules/signIn/signIn';
-import { SignUp } from '../../modules/signUp/signUp';
-import { Block } from '../../core/Block';
+import { SignIn } from './signIn/signIn';
+import { SignUp } from './signUp/signUp';
+import { Block } from '../../core/block/Block';
 import { TPropsObject } from '../../core/typeBlock';
 import { router } from '../../core/router/initRouter';
 import { EPATH } from '../../core/router/namePath';

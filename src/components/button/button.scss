@@ -12,4 +12,9 @@
   line-height: 1.2;
   text-transform: uppercase;
   cursor: pointer;
+
+  &--back {
+    color: $light-aque;
+    background-color: $base-color;
+  }
 }

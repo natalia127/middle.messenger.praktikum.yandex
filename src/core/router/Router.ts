@@ -1,50 +1,80 @@
 import { Route } from './Route';
+import { IRoute } from './typeRouting';
+import {
+  Constructable, IBlock
+} from '../../core/typeBlock';
 export class Router {
-  constructor(rootQuery) {
+  routes: IRoute[];
+
+  history: History;
+
+  private currentRoute: IRoute;
+
+  private afterCallback: Function[];
+
+  private callbackDidTransition: Function;
+
+  private rootQuery: string;
+
+  constructor(rootQuery: string) {
     if (Router.__instance) {
       return Router.__instance;
     }
 
     this.routes = [];
     this.history = window.history;
-    this._currentRoute = null;
-    this._rootQuery = rootQuery;
-    this.after = [];
+    this.rootQuery = rootQuery;
+    this.afterCallback = [];
     Router.__instance = this;
   }
 
-  use(pathname, block) {
-    const route = new Route(pathname, block, { rootQuery: this._rootQuery });
+  use(pathname: string, block: Constructable<IBlock>) {
+    const route = new Route(pathname, block, { rootQuery: this.rootQuery });
     this.routes.push(route);
     return this;
   }
 
   start() {
     window.onpopstate = event => {
-      this._onRoute(event.currentTarget.location.pathname);
+      if (!event.currentTarget) {
+        return;
+      }
+      const pathname = event.currentTarget.location.pathname;
+      const response: boolean = this.routerDidTransition(pathname);
+      if (!response) {
+        return;
+      }
+      this.onRoute(pathname);
       this.startAfter();
     };
-
-    this._onRoute(window.location.pathname);
+    const response: boolean = this.routerDidTransition(window.location.pathname);
+    if (!response) {
+      return;
+    }
+    this.onRoute(window.location.pathname);
   }
 
-  _onRoute(pathname) {
+  private onRoute(pathname: string) {
     const route = this.getRoute(pathname);
 
     if (!route) {
       return;
     }
-    if (this._currentRoute) {
-      this._currentRoute.leave();
+    if (this.currentRoute) {
+      this.currentRoute.leave();
     }
 
-    this._currentRoute = route;
-    route.render(route, pathname);
+    this.currentRoute = route;
+    route.render();
   }
 
-  go(pathname) {
+  go(pathname: string) {
+    const response: boolean = this.routerDidTransition(pathname);
+    if (!response) {
+      return;
+    }
     this.history.pushState({}, '', pathname);
-    this._onRoute(pathname);
+    this.onRoute(pathname);
     this.startAfter();
   }
 
@@ -56,20 +86,31 @@ export class Router {
     this.history.forward();
   }
 
-  getRoute(pathname) {
+  getRoute(pathname: string) {
     return this.routes.find(route => route.match(pathname));
   }
 
   getCurrentPath() {
-    const result = this._currentRoute ? this._currentRoute._pathname : window.location.pathname;
+    const result = this.currentRoute ? this.currentRoute.getPathname() : window.location.pathname;
     return result;
   }
 
-  addAfterCallback(f) {
-    this.after.push(f);
+  addAfterCallback(f: Function) {
+    this.afterCallback.push(f);
+  }
+
+  setCallbackDidTransition(callbackDidTransition: Function) {
+    this.callbackDidTransition = callbackDidTransition;
+  }
+
+  routerDidTransition(pathname: string): boolean {
+    if (this.callbackDidTransition) {
+      return this.callbackDidTransition(pathname);
+    }
+    return true;
   }
 
   startAfter() {
-    this.after.forEach(f=>f());
+    this.afterCallback.forEach(f=>f());
   }
 }
