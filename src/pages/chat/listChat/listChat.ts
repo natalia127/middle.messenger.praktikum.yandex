@@ -35,9 +35,10 @@ export class ListChat extends Block {
 
   render(): string {
     const itemsChat = chatStore.getState().chats.reduce((acc, item) => {
-      const lastMessage = item.last_message || '';
+      const lastMessage = item.last_message ? item.last_message.content : '';
       const unreadCount = item.unread_count || '';
       const pathAvatar = item.avatar ? mainUrlForStatic + item.avatar : '';
+
       acc += `<ItemChat 
       ::id="${item.id}"
       ::name="${item.title}" 

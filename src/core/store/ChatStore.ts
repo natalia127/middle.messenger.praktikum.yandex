@@ -12,7 +12,13 @@ type TState = {
   chatsUser: {
     [key: number]: {}
   },
-  errorGetChat: boolean
+  chatsConnect: {
+    [key: number]: WebSocket
+  }
+  chatsMessages: {
+    [key: number]: []
+  }
+  errorGetChats: boolean
 }
 export class ChatStore extends Store {
   protected state: TState = {
@@ -20,7 +26,11 @@ export class ChatStore extends Store {
     chatsUser: {
 
     },
-    errorGetChat: false
+    chatsConnect: {},
+    errorGetChats: false,
+    chatsMessages: {
+
+    }
 
   };
 

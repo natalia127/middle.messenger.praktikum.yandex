@@ -16,7 +16,7 @@ export enum EHandsUser {
 }
 
 export enum EHandsChat {
-  GET_CHAT = '/chats',
+  GET_CHATS = '/chats',
   CREATE_CHAT = '/chats',
   DELETE_CHAT = '/chats',
 

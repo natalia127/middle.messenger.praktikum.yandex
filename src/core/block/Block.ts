@@ -252,10 +252,14 @@ export abstract class Block implements IBlock {
   }
 
   private wrapMethod(nameMethod: string, callBack: Function) {
-    const f = this.methods[nameMethod];
+    let f = this.methods[nameMethod].name === 'wrapMethod' ? this.methods[`initial${nameMethod}`] : this.methods[nameMethod];
+    if (f.name !== 'wrapMethod') {
+      this.methods[`initial${nameMethod}`] = f;
+    }
     this.methods[nameMethod] = function wrapMethod() {
       let result = f();
       callBack(result);
+      return true;
     };
   }
 
@@ -267,12 +271,14 @@ export abstract class Block implements IBlock {
 
       Object.entries(propsChild).forEach(([key, value]: [string, string]) => {
         let valueAttr = this.props[value] || this.methods[value];
+
         if (typeof valueAttr === 'function') {
-          valueAttr = this.methods[value]();
-          this.wrapMethod(value, (result: string)=>{
+          let callback = (result: string)=>{
             el.setAttribute(key, result);
-          });
-        }
+          };
+          this.wrapMethod(value, callback);
+          this.methods[value]();
+        } else
         if (valueAttr) {
           el.setAttribute(key, valueAttr);
         }
@@ -287,6 +293,9 @@ export abstract class Block implements IBlock {
       const {
         nameChild, nChild, paramsEvents, propsChild
       } = getParametrsWithMock(stubChild);
+      // console.log(nChild);
+      // console.log(nameChild);
+      // console.log(this.children[nChild]);
 
       if (!nChild || !nameChild || (nameChild && !this.innerComponents[nameChild])) {
         return;
@@ -296,9 +305,15 @@ export abstract class Block implements IBlock {
 
       if (this.children[nChild]) {
         const needPropsChild = getObjIntersection(this.children[nChild].props, propsChild);
-        if (!isEqual(needPropsChild, propsChild)) {
+        // console.log(this.children[nChild].props);
+        // console.log(propsChild);
+        // console.log(isEqual(needPropsChild, this.children[nChild].props));
+
+        if (!isEqual(needPropsChild, this.children[nChild].props)) {
           this.children[nChild].setProps(propsChild);
+          this.children[nChild].forseContent();
         }
+
         child = this.children[nChild];
       } else {
         child = new this.innerComponents[nameChild](propsChild);
@@ -417,5 +432,9 @@ export abstract class Block implements IBlock {
 
   private clearCachWithChild() {
     this.children = {};
+  }
+
+  forseContent() {
+    this._render();
   }
 }

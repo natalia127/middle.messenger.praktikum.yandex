@@ -1,5 +1,5 @@
 import { Block } from '../../core/block/Block';
-import { TPropsObject } from '../../core/typeBlock';
+import { TPropsObject } from '../../core/block/typeBlock';
 import {
   validateInput
 } from '../../core/utils/validate';
@@ -13,7 +13,8 @@ const context = {
   name: ' ',
   messageError: ' ',
   isError: false,
-  needValidate: false
+  needValidate: false,
+  needForwardEmit: false
 };
 
 export class Input extends Block {
@@ -23,12 +24,18 @@ export class Input extends Block {
       data,
       methods: {
         handlerInput(e: Event) {
-          if (!e || !e.target) {
-            return;
-          }
           this.setProps({ value: (e.target as HTMLInputElement).value });
           if (this.props.needValidate) {
             validateInput(this);
+          }
+          if (this.props.needForwardEmit) {
+            let event = new CustomEvent('handlerChangeInput', {
+              detail: {
+                value: e.target.value
+              },
+              bubbles: true
+            });
+            this.getContent().dispatchEvent(event);
           }
         }
       }

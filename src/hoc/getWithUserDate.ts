@@ -2,7 +2,7 @@ import { userStore } from '../core/store/UserStore';
 import { StoreEvents } from '../core/store/StoreBase';
 import {
   TPropsObject, Constructable, IBlock
-} from '../core/typeBlock';
+} from '../core/block/typeBlock';
 
 export function getWithUserDate(Component: Constructable<IBlock>) {
   return class extends Component {

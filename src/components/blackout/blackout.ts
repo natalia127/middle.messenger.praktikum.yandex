@@ -1,5 +1,5 @@
 import { Block } from '../../core/block/Block';
-import { TPropsObject } from '../../core/typeBlock';
+import { TPropsObject } from '../../core/block/typeBlock';
 
 export class Blackout extends Block {
   constructor(props: TPropsObject) {

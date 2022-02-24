@@ -2,15 +2,13 @@ import { Route } from './Route';
 import { IRoute } from './typeRouting';
 import {
   Constructable, IBlock
-} from '../../core/typeBlock';
+} from '../../core/block/typeBlock';
 export class Router {
   routes: IRoute[];
 
   history: History;
 
   private currentRoute: IRoute;
-
-  private afterCallback: Function[];
 
   private callbackDidTransition: Function;
 
@@ -24,7 +22,6 @@ export class Router {
     this.routes = [];
     this.history = window.history;
     this.rootQuery = rootQuery;
-    this.afterCallback = [];
     Router.__instance = this;
   }
 
@@ -45,7 +42,6 @@ export class Router {
         return;
       }
       this.onRoute(pathname);
-      this.startAfter();
     };
     const response: boolean = this.routerDidTransition(window.location.pathname);
     if (!response) {
@@ -75,7 +71,6 @@ export class Router {
     }
     this.history.pushState({}, '', pathname);
     this.onRoute(pathname);
-    this.startAfter();
   }
 
   back() {
@@ -95,10 +90,6 @@ export class Router {
     return result;
   }
 
-  addAfterCallback(f: Function) {
-    this.afterCallback.push(f);
-  }
-
   setCallbackDidTransition(callbackDidTransition: Function) {
     this.callbackDidTransition = callbackDidTransition;
   }
@@ -108,9 +99,5 @@ export class Router {
       return this.callbackDidTransition(pathname);
     }
     return true;
-  }
-
-  startAfter() {
-    this.afterCallback.forEach(f=>f());
   }
 }

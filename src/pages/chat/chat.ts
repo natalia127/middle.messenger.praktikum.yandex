@@ -83,14 +83,17 @@ export class Chat extends Block {
             needDelChat: false
           });
         },
-        selectChat(e: CustomEvent) {
+        async selectChat(e: CustomEvent) {
           const idChat = e.detail.idChat;
-          chatController.getUsersChat(idChat);
+          if (idChat && this.props.idActiveChat !== idChat) {
+            await chatController.getUsersChat(idChat);
 
-          this.setProps({
-            idActiveChat: idChat,
-            nameActiveChat: e.detail.nameChat
-          });
+            this.setProps({
+              idActiveChat: idChat,
+              nameActiveChat: e.detail.nameChat
+            });
+            console.log(this.props);
+          }
         }
       }
     };

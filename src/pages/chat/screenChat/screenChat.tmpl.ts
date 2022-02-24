@@ -1,33 +1,23 @@
-export const screenChat: string = `<div class="screenChat">
-  <div class="screenChat__correspondence">
-    <div class="screenChat__wrapperMessages">
-      <div class="screenChat__imgProfile"><Avatar /></div>
-      <div class="screenChat__messages">
-        <div class="screenChat__message">
-          Какое-то сообщениеКакое-то сообщ ениеКакое-то сообщениеКакое-то сообщениеКакое-то сообщениеКакое-то сообщениеКакое-то сообщение
-        </div>
-      </div>
-    </div>
-    <div class="screenChat__wrapperMessages">
-      <div class="screenChat__imgProfile"><Avatar /></div>
-      <div class="screenChat__messages">
-        <div class="screenChat__message">
-        Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222
-        </div>
-        <div class="screenChat__message">
-        Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222Какое-то сообщение2222
-        </div>
-      </div>
-    </div>
+export const getScreenChat = (messages: string)=>{
+  return `<div class="screenChat">
+  <div class="screenChat__correspondence js-scroll">
+    ${messages}
   </div>
-  <div class="screenChat__send">
-    <div class="screenChat__icon"><img src="{{ iconClip }}" alt=" " /></div>
+  <div class="screenChat__send" @handlerChangeInput="handlerPrintMessage" >
+
     <Input 
       ::placeholder='Написать сообщение'
-      ::class="screenChat__print"
+      ::class="screenChat__print js-input"
       ::name='message'
       ::type='text'
+      ::needForwardEmit="true"
     />
-    <div class="screenChat__icon"><img src="{{ iconSend }}" alt=" " /></div>
+    <div 
+      class="screenChat__icon" 
+      @click="handlerSendMessage"
+    >
+        <img src="{{ iconSend }}" alt=" " /></div>
   </div>
 </div>`;
+};
+// <div class="screenChat__icon"><img src="{{ iconClip }}" alt=" " /></div>

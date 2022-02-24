@@ -1,6 +1,6 @@
 import { Header } from '../components/header/header';
 import { Block } from '../core/block/Block';
-import { TPropsObject } from '../core/typeBlock';
+import { TPropsObject } from '../core/block/typeBlock';
 import { getComponentTmpl, registerRouts } from '../core/router/routing';
 import { authController } from '../core/controllers/authController';
 class App extends Block {

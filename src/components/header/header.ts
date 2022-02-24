@@ -2,13 +2,13 @@ import {
   authorizedPaths, EPATH
 } from '../../core/router/namePath';
 import { Block } from '../../core/block/Block';
-import { TPropsObject } from '../../core/typeBlock';
+import { TPropsObject } from '../../core/block/typeBlock';
 import { source } from './header.tmpl';
 import { router } from '../../core/router/initRouter';
-
+import { getWithAuth } from '../../hoc/getWithAuth';
 const personIcon = new URL('../../img/person.svg', import.meta.url);
 const chatIcon = new URL('../../img/chat.svg', import.meta.url);
-export class Header extends Block {
+class Header_ extends Block {
   constructor(props: TPropsObject) {
     const info = {
       data: {
@@ -41,11 +41,9 @@ export class Header extends Block {
     super(info);
   }
 
-  componentDidMount() {
-    router.addAfterCallback(this.methods.isAuthorizedPaths);
-  }
-
   render() {
     return source;
   }
 }
+
+export const Header = getWithAuth(Header_);

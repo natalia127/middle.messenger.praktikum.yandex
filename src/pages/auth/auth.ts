@@ -1,7 +1,7 @@
 import { SignIn } from './signIn/signIn';
 import { SignUp } from './signUp/signUp';
 import { Block } from '../../core/block/Block';
-import { TPropsObject } from '../../core/typeBlock';
+import { TPropsObject } from '../../core/block/typeBlock';
 import { router } from '../../core/router/initRouter';
 import { EPATH } from '../../core/router/namePath';
 export class Auth extends Block {

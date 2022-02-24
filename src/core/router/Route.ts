@@ -2,7 +2,7 @@ import { isEqualString } from '../utils/mydash';
 import { render } from '../utils/renderDOM';
 import {
   Constructable, IBlock
-} from '../../core/typeBlock';
+} from '../../core/block/typeBlock';
 import { IRoute } from './typeRouting';
 export class Route implements IRoute {
   private pathname: string;

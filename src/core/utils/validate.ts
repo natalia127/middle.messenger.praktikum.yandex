@@ -1,7 +1,7 @@
 import { Input } from '../../components/input/input';
 import {
   IBlock
-} from '../../core/typeBlock';
+} from '../../core/block/typeBlock';
 type resultValid = {message: string,
   isValid: boolean}
 const mapNameInput: {[key: string]: string} = {

@@ -1,5 +1,5 @@
 import { EventBus } from '../EventBus';
-import { set } from '../utils/mydash';
+import { set, setLink } from '../utils/mydash';
 
 export enum StoreEvents {
   Updated = 'updated',
@@ -21,5 +21,9 @@ export class Store extends EventBus {
     Object.keys(state).forEach((key) => {
       this.set(key, null);
     });
+  }
+
+  public setLink(path: string, value: unknown) {
+    setLink(this.state, path, value);
   }
 }

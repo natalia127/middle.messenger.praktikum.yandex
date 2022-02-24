@@ -1,4 +1,5 @@
 import { chatStore } from '../store/ChatStore';
+import { userStore } from '../store/UserStore';
 import { ChatAPI } from '../api/chatApi';
 import {
   TDelUsersChat, TAddChat, TAddUserChat, TDelChat, TChangeAvatarChat
@@ -7,17 +8,96 @@ import {
 class ChatController {
   API = new ChatAPI();
 
-  public getChat() {
-    this.API.getChat().then((result) => {
+  public async joinChat(chatId: number) {
+    if (chatStore.getState().chatsConnect[chatId]) {
+      return true;
+    }
+    const result = await this.API.getTokenChat(chatId).then((result) => {
+      if (result.status === 200) {
+        const response = JSON.parse(result.response);
+        const tokenValue = response.token;
+
+        const userId = userStore.getState().id;
+
+        return { userId, tokenValue };
+      }
+      return new Error('ошибка получения токена');
+    }).then(async ({ userId, tokenValue }:{ userId: number, tokenValue: string })=>{
+      const socket = await this.API.connectMessaging({ userId, chatId, tokenValue });
+      await this.setListenersOnSocket(socket, chatId);
+      chatStore.setLink(['chatsConnect', chatId], socket);
+      this.getOldMessage(chatId, 0);
+      return true;
+    }).catch((e)=>{
+      console.log(e);
+    });
+
+    return result;
+  }
+
+  async setListenersOnSocket(socket: WebSocket, chatId: number) {
+    socket.addEventListener('close', event => {
+      if (event.wasClean) {
+        console.log('Соединение закрыто чисто');
+      } else {
+        console.log('Обрыв соединения');
+      }
+
+      console.log(`Код: ${event.code} | Причина: ${event.reason}`);
+    });
+
+    socket.addEventListener('message', event => {
+      const chatsMessages = chatStore.getState().chatsMessages;
+      const dataMessage = JSON.parse(event.data);
+      if (!chatsMessages[chatId]) {
+        chatsMessages[chatId] = [];
+      }
+      if (Array.isArray(dataMessage)) {
+        chatsMessages[chatId].push(...dataMessage.reverse());
+      } else {
+        chatsMessages[chatId].push(dataMessage);
+      }
+
+      chatStore.set('needUpdate', true);
+    });
+
+    socket.addEventListener('error', event => {
+      console.log('Ошибка', event.message);
+    });
+
+    return new Promise((resolve) => {
+      socket.addEventListener('open', () => {
+        console.log('Соединение установлено');
+        resolve(true);
+        // socket.send(JSON.stringify({
+        //   content: 'Моё первое сообщение миру!',
+        //   type: 'message'
+        // }));
+      });
+    });
+  }
+
+  getOldMessage(chatId: number, numberMessage: number = 0) {
+    const socket = chatStore.getState().chatsConnect[chatId];
+
+    socket.send(JSON.stringify({
+      content: numberMessage,
+      type: 'get old'
+    }));
+  }
+
+  public getChats() {
+    return this.API.getChats().then((result) => {
       if (result.status === 200) {
         const response = JSON.parse(result.response);
         chatStore.set('chats', response);
         if (chatStore.getState().errorGetChat) {
           chatStore.set('errorGetChat', false);
         }
-      } else {
-        chatStore.set('errorGetChat', true);
+        return true;
       }
+      chatStore.set('errorGetChat', true);
+      return false;
     });
   }
 
@@ -43,12 +123,12 @@ class ChatController {
     });
   }
 
-  public getUsersChat(id: number) {
+  public async getUsersChat(id: number) {
     if (chatStore.getState().chatsUser[id]) {
       return true;
     }
 
-    return this.updateUserChat(id);
+    await this.updateUserChat(id);
   }
 
   updateUserChat(id: number) {

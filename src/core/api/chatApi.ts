@@ -4,8 +4,8 @@ import {
   TDelUsersChat, TAddChat, TAddUserChat, TDelChat, TChangeAvatarChat
 } from '../typeDate';
 export class ChatAPI {
-  getChat() {
-    return apiInstanceYaPracticum.get(EHandsChat.GET_CHAT);
+  getChats() {
+    return apiInstanceYaPracticum.get(EHandsChat.GET_CHATS);
   }
 
   addChat(data: TAddChat) {
@@ -43,5 +43,21 @@ export class ChatAPI {
     return apiInstanceYaPracticum.put('/chats/avatar', {
       data: formdata
     });
+  }
+
+  getTokenChat(id: number) {
+    return apiInstanceYaPracticum.post(`/chats/token/${id}`, {
+      data: JSON.stringify({ id })
+    });
+  }
+
+  async connectMessaging(data: {
+    userId: number,
+    chatId: number,
+    tokenValue: string
+  }) {
+    const socket = await new WebSocket(`wss://ya-praktikum.tech/ws/chats/${data.userId}/${data.chatId}/${data.tokenValue}`);
+
+    return socket;
   }
 }

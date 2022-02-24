@@ -59,20 +59,8 @@
     margin-bottom: 2em;
     padding: 0 5em;
     display: flex;
-
-    &:nth-child(2n + 1) {
-      align-self: flex-end;
-
-      .screenChat__imgProfile {
-        right: 1em;
-      }
-    }
-
-    &:nth-child(2n) {
-
-      .screenChat__imgProfile {
-        left: 1em;
-      }
+    .screenChat__imgProfile {
+      left: 1em;
     }
   }
 
@@ -89,22 +77,29 @@
     padding: 1em;
     border-radius: 1em;
     line-height: 1.4em;
-
+    min-width: 20em;
     &:not(:last-child) {
-      margin-bottom: 1em;
+      margin-bottom: 0.5em;
     }
   }
 
+  &__message-my {
+    background: $my-message;
+  }
+
   &__print {
-    padding: 1em 1em;
+    padding: 1em;
     border-radius: 1em;
-    flex-grow: 1;
+    width: 95%;
     margin: 0 1em;
   }
 
   &__send {
     display: flex;
     align-items: center;
+    .input-wrapper {
+      flex-grow: 1;
+    }
   }
 
   &__icon {

@@ -38,7 +38,7 @@ class AuthController {
     this.getUser().then((result) => {
       if (result && !authStore.getState().isAuth) {
         authStore.set('isAuth', true);
-        chatController.getChat();
+        chatController.getChats();
         router.go(EPATH.CHAT);
       }
     });

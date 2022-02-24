@@ -1,4 +1,4 @@
-export function getTempl(itemsChat) {
+export function getTempl(itemsChat: string) {
   return `<div class="listChat ">
   <span class="listChat__add" @click="handlerClickIconAdd" ><img src="{{iconPlus}}" alt="" /></span>
   <Input 
