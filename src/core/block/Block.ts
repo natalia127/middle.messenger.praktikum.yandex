@@ -186,7 +186,10 @@ export abstract class Block implements IBlock {
 
     const content = new Templator({
       template,
-      context: { ...this.props, ...this.methods }
+      context: {
+        ...this.props,
+        ...this.methods
+      }
     }).compile();
 
     content.setAttribute(EDATA_PARAMS.BLOCK_ID, this.id);
@@ -247,7 +250,10 @@ export abstract class Block implements IBlock {
         if (typeof valueCondition === 'function') {
           this.wrapMethod(condition, callbackElse);
         }
+        nextSibling.removeAttribute(EDATA_PARAMS.CONDITION_ELSE);
       }
+
+      el.removeAttribute(EDATA_PARAMS.CONDITION_IF);
     });
   }
 
@@ -293,9 +299,6 @@ export abstract class Block implements IBlock {
       const {
         nameChild, nChild, paramsEvents, propsChild
       } = getParametrsWithMock(stubChild);
-      // console.log(nChild);
-      // console.log(nameChild);
-      // console.log(this.children[nChild]);
 
       if (!nChild || !nameChild || (nameChild && !this.innerComponents[nameChild])) {
         return;
@@ -305,9 +308,6 @@ export abstract class Block implements IBlock {
 
       if (this.children[nChild]) {
         const needPropsChild = getObjIntersection(this.children[nChild].props, propsChild);
-        // console.log(this.children[nChild].props);
-        // console.log(propsChild);
-        // console.log(isEqual(needPropsChild, this.children[nChild].props));
 
         if (!isEqual(needPropsChild, this.children[nChild].props)) {
           this.children[nChild].setProps(propsChild);

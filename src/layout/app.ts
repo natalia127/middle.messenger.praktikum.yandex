@@ -29,10 +29,6 @@ export const app = new App(
   {
     components: {
       Header
-
-    },
-    methods: {
-
     }
   }
 );

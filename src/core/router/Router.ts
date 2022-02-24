@@ -6,6 +6,8 @@ import {
 export class Router {
   routes: IRoute[];
 
+  private errorRoutes: IRoute;
+
   history: History;
 
   private currentRoute: IRoute;
@@ -25,9 +27,13 @@ export class Router {
     Router.__instance = this;
   }
 
-  use(pathname: string, block: Constructable<IBlock>) {
+  use(pathname: string, block: Constructable<IBlock>, isErrorRoutess: boolean = false) {
     const route = new Route(pathname, block, { rootQuery: this.rootQuery });
-    this.routes.push(route);
+    if (isErrorRoutess) {
+      this.errorRoutes = route;
+    } else {
+      this.routes.push(route);
+    }
     return this;
   }
 
@@ -51,7 +57,7 @@ export class Router {
   }
 
   private onRoute(pathname: string) {
-    const route = this.getRoute(pathname);
+    const route = this.getRoute(pathname) || this.errorRoutes;
 
     if (!route) {
       return;

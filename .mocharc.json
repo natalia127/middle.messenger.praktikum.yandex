@@ -1,3 +1,6 @@
 {
-  "require": "@babel/register"
+  "extension": ["ts"],
+  "spec": "test/**/*.spec.ts",
+  "require": "test/babel-register.js",
+  "delay": true
 }

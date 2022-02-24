@@ -26,6 +26,7 @@ export function registerRouts() {
   router.use(EPATH.EDIT_PASSWORD, PasswordEdit);
   router.use(EPATH.SIGNIN, Auth);
   router.use(EPATH.SIGNUP, Auth);
+  router.use('/404', Page404, true);
 }
 export function getComponentTmpl() {
   router.start();

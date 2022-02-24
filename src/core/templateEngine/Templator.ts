@@ -28,7 +28,7 @@ export class Templator {
     return result || document.createElement('div');
   }
 
-  compileRawTmpl(): string {
+  private compileRawTmpl(): string {
     let tmpl: string = this.replaceOnCtxValue();
     tmpl = this.insertChildren(tmpl);
     return tmpl;
@@ -36,7 +36,7 @@ export class Templator {
 
   private replaceOnCtxValue() {
     const ctx: TCtx = this.ctx;
-    let tmpl: string = this.replaceBlockIfElse();
+    let tmpl: string = this._rawTemplate;
 
     const regExp: RegExp = /\{\{(.*?)\}\}/gis;
     let key: RegExpExecArray| null = regExp.exec(tmpl);
@@ -55,35 +55,6 @@ export class Templator {
           tmpl = tmpl.replace(new RegExp(rawTemplateValue, 'gi'), data);
           regExp.lastIndex = regExp.lastIndex - rawTemplateValue.length + data.length;
         }
-      }
-      key = regExp.exec(tmpl);
-    }
-    return tmpl;
-  }
-
-  replaceBlockIfElse() {
-    // TODO дополнить блоками elseif
-    const ctx = this.ctx;
-    let tmpl: string = this._rawTemplate;
-    const regExp: RegExp = /\{%\s*if\s*(.[^\s'",]+)\s*?%\}(.*?)((\{%\s*else\s*%\})(.*?))?(\{%\s*endif\s*%\})/gis;
-
-    let key: RegExpExecArray | null = regExp.exec(tmpl);
-
-    while (key) {
-      const templBlockCondition = key[0];
-      const condition = key[1];
-      const resultIfTrue = key[2];
-      const resultIfFalse = key[3] ? key[5] : '';
-
-      if (Object.prototype.hasOwnProperty.call(ctx, condition)) {
-        let valueReplace = ctx[condition] ? key[2] : '';
-        if (ctx[condition]) {
-          valueReplace = resultIfTrue;
-        } else {
-          valueReplace = resultIfFalse;
-        }
-        tmpl = tmpl.replace(templBlockCondition, valueReplace);
-        regExp.lastIndex = regExp.lastIndex - templBlockCondition.length + valueReplace.length;
       }
       key = regExp.exec(tmpl);
     }
