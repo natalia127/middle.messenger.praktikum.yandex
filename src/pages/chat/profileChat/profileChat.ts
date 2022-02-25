@@ -23,7 +23,6 @@ class ProfileChat_ extends Block {
   render() {
     let usersChat = '';
     const infoUsersChat = chatStore.getState().chatsUser[this.props.idChat];
-    console.log(this.props.idChat);
 
     if (infoUsersChat) {
       usersChat = infoUsersChat.reduce((acc: string, infoUser) => {

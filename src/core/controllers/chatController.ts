@@ -29,7 +29,6 @@ class ChatController {
       this.getOldMessage(chatId, 0);
       return true;
     }).catch((e)=>{
-      console.log(e);
     });
 
     return result;

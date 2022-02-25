@@ -92,7 +92,6 @@ export class Chat extends Block {
               idActiveChat: idChat,
               nameActiveChat: e.detail.nameChat
             });
-            console.log(this.props);
           }
         }
       }
