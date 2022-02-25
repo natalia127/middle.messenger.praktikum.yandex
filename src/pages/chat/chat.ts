@@ -6,7 +6,7 @@ import { Block } from '../../core/block/Block';
 import { TPropsObject } from '../../core/block/typeBlock';
 import { chat } from './chat.tmpl';
 import { AddChat } from './addChat/addChat';
-import { AddUserChat } from './addUserChat/AddUserChat';
+import { AddUserChat } from './addUserChat/addUserChat';
 import { DelUserChat } from './delUserChat/delUserChat';
 import { DelChat } from './delChat/delChat';
 import { Blackout } from '../../components/blackout/blackout';
