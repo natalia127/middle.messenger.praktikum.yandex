@@ -163,47 +163,38 @@ describe('Block', () => {
     
     expect(content).to.eq('<div class="hidden">isValid</div><div>isError</div>');
   });
+});
 
-  it('Обновление пропсов', ()=> {
-    class Block1 extends Block {
-      constructor(props) {
-        super({data: props})
-      }
-      render() {
-        return '<div>{{ test }}</div>';
-      }
+
+(async function() {
+  class Block1 extends Block {
+    constructor(props) {
+      super({data: props})
     }
-    const app = new Block1({
-      test: 'Тест'
-    })
+    render() {
+      return '<div>{{ test }}</div>';
+    }
+  }
+  const app = new Block1({
+    test: 'Тест'
+  })
 
-    app.setProps({
-      test: 'Новый Тест'
-    })
+  app.setProps({
+    test: 'Новый Тест'
+  })
 
-    const fn = async () => {
-      return new Promise(resolve => {
-        setTimeout(resolve, 500);
-      });
-    };
-    
-    // instead of an IIFE, you can use 'setImmediate' or 'nextTick' or 'setTimeout'
-    (async function () {
-      const z = await fn().then(()=>{
-        it(`expected value ${z}`, function () {
-          const content = app.getContent().innerHTML;
-          expect(content).to.eq('Новый Тест');
-        });
-      }
+  await new Promise(resolve => {
+    setTimeout(resolve, 500);
+  });
 
-      );
-    
+  describe('Ассинхронные операции с Block', function() {
 
-
-
-    
-      run();
-    })();
+    it(`Обновление пропсов`, function () {
+      const content = app.getContent().innerHTML;
+      expect(content).to.eq('Новый Тест');
+    });
 
   });
-});
+
+  run();
+})();
