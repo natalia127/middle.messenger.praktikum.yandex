@@ -264,6 +264,8 @@ export abstract class Block implements IBlock {
     }
     this.methods[nameMethod] = function wrapMethod() {
       let result = f();
+      console.log(result);
+
       callBack(result);
       return true;
     };
@@ -280,10 +282,12 @@ export abstract class Block implements IBlock {
 
         if (typeof valueAttr === 'function') {
           let callback = (result: string)=>{
+            console.log(result);
+
             el.setAttribute(key, result);
           };
           this.wrapMethod(value, callback);
-          valueAttr = this.methods[value]();
+          this.methods[value]();
         } else
         if (valueAttr) {
           console.log(valueAttr);
