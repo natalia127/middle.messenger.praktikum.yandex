@@ -10,11 +10,21 @@ import { AddUserChat } from './addUserChat/addUserChat';
 import { DelUserChat } from './delUserChat/delUserChat';
 import { DelChat } from './delChat/delChat';
 import { Blackout } from '../../components/blackout/blackout';
+import { chatStore } from '../../core/store/ChatStore';
+import { StoreEvents } from '../../core/store/StoreBase';
 import { chatController } from '../../core/controllers/chatController';
 const iSetting = new URL('../../img/cog-outline.svg', import.meta.url);
 const iProfileChat = new URL('../../img/account-group.svg', import.meta.url);
 export class Chat extends Block {
   constructor(props: TPropsObject) {
+    chatStore.on(StoreEvents.Updated, () => {
+      const isActiveChat = chatStore.getState().chats
+        .find(c => c.id === +this.props.idActiveChat);
+
+      if (!isActiveChat && this.props.idActiveChat) {
+        this.methods.handlerChatDeleted();
+      }
+    });
     const info = {
       data: {
         iSetting: iSetting.href,
@@ -93,6 +103,9 @@ export class Chat extends Block {
               nameActiveChat: e.detail.nameChat
             });
           }
+        },
+        handlerChatDeleted() {
+          this.setProps({ idActiveChat: null });
         }
       }
     };

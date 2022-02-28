@@ -25,8 +25,9 @@ export class DelChat extends Block {
             chatId: this.props.idActiveChat
           });
           if (isSuccessfully) {
-            let event = new Event('hideModal', { bubbles: true });
-            this.getContent().dispatchEvent(event);
+            let eventHideModal = new Event('hideModal', { bubbles: true });
+
+            this.getContent().dispatchEvent(eventHideModal);
           } else {
             this.setProps({
               isError: true

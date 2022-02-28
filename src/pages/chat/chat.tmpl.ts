@@ -5,6 +5,7 @@ export const chat: string = `<div class="chat row fullContainer"
 @hideModal="hideModal"
 @delUserChat="showDelUserChat"
 @delChat="showDelChat"
+@chatDeleted="handlerChatDeleted"
 >
   <div t-if="needBlackout" @click="hideModal">
     <Blackout />

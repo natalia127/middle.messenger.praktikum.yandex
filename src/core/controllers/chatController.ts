@@ -68,10 +68,6 @@ class ChatController {
       socket.addEventListener('open', () => {
         console.log('Соединение установлено');
         resolve(true);
-        // socket.send(JSON.stringify({
-        //   content: 'Моё первое сообщение миру!',
-        //   type: 'message'
-        // }));
       });
     });
   }
@@ -155,7 +151,11 @@ class ChatController {
   public delUsersChat(data: TDelUsersChat) {
     return this.API.delUserChat(data).then((result) => {
       if (result.status === 200) {
-        this.updateUserChat(data.chatId);
+        const countUsersChat = chatStore.getState().chatsUser[data.chatId].length;
+
+        if (countUsersChat > 1) {
+          this.updateUserChat(data.chatId);
+        }
         return true;
       }
       return false;
@@ -165,6 +165,10 @@ class ChatController {
   public async delChat(data: TDelChat) {
     const isSuccess = await this.API.delChat(data).then((result) => {
       if (result.status === 200) {
+        this.getChats();
+        chatStore.set(`chatsUser[${data.chatId}]`, null);
+        chatStore.set(`chatsConnect[${data.chatId}]`, null);
+        chatStore.set(`chatsMessages[${data.chatId}]`, null);
         return true;
       }
       return false;
@@ -176,11 +180,10 @@ class ChatController {
     this.API.changeAvatar(data).then((result) => {
       if (result.status === 200) {
         const response = JSON.parse(result.response);
-        const idPathChat = chatStore.getState().chats.findIndex((chat)=> chat.id === data.idChat);
+        const idPathChat = chatStore.getState().chats.findIndex((chat)=> chat.id === data.chatId);
         Object.entries(response).forEach(([key, value]) => {
           chatStore.set(`chats[${idPathChat}].${key}`, value);
         });
-        // setUserStore(response);
       }
     });
   }

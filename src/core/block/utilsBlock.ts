@@ -21,7 +21,6 @@ export const parseDataMock = function<T extends string> (
     const [key, value] = paramEvent.split(charSeparate);
     return { key, value };
   });
-  el.removeAttribute(nameData);
 
   // eslint-disable-next-line consistent-return
   return result;
@@ -45,9 +44,6 @@ export const getParametrsWithMock = function (el: Element) {
   const nChild = el.getAttribute(EDATA_PARAMS.NUMBER_CHILD);
   const paramsEvents = parseDataMock(el, EDATA_PARAMS.EVENTS);
   const propsChild = getPropsWithMock(el);
-  el.removeAttribute(EDATA_PARAMS.CHILD);
-  el.removeAttribute(EDATA_PARAMS.NUMBER_CHILD);
-  el.removeAttribute(EDATA_PARAMS.EVENTS);
 
   return {
     nameChild, nChild, paramsEvents, propsChild

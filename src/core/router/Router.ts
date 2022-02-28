@@ -3,7 +3,12 @@ import { IRoute } from './typeRouting';
 import {
   Constructable, IBlock
 } from '../../core/block/typeBlock';
-export class Router {
+import { EventBus } from '../EventBus';
+
+export enum EROUTER_EVENTS {
+  FLOW_BT = 'flow:before-transition'
+}
+export class Router extends EventBus {
   routes: IRoute[];
 
   private errorRoutes: IRoute;
@@ -20,7 +25,7 @@ export class Router {
     if (Router.__instance) {
       return Router.__instance;
     }
-
+    super();
     this.routes = [];
     this.history = window.history;
     this.rootQuery = rootQuery;
@@ -62,12 +67,15 @@ export class Router {
     if (!route) {
       return;
     }
+
     if (this.currentRoute) {
       this.currentRoute.leave();
     }
 
     this.currentRoute = route;
+
     route.render();
+    this.emit(EROUTER_EVENTS.FLOW_BT);
   }
 
   go(pathname: string) {

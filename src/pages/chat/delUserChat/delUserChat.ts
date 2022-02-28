@@ -11,6 +11,7 @@ export class DelUserChat extends Block {
       data: {
         idActiveChat: null,
         login: '',
+        idDelUser: null,
         ...props
       },
       components: {

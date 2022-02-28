@@ -12,9 +12,11 @@ export class Store extends EventBus {
     return this.state;
   }
 
-  public set(path: string, value: unknown) {
+  public set(path: string, value: unknown, isUpdate: boolean = true) {
     set(this.state, path, value);
-    this.emit(StoreEvents.Updated);
+    if (isUpdate) {
+      this.emit(StoreEvents.Updated);
+    }
   }
 
   public clear() {
@@ -25,5 +27,6 @@ export class Store extends EventBus {
 
   public setLink(path: string, value: unknown) {
     setLink(this.state, path, value);
+    this.emit(StoreEvents.Updated);
   }
 }

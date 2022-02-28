@@ -4,7 +4,7 @@ import { Block } from '../../../core/block/Block';
 import { TPropsObject } from '../../../core/block/typeBlock';
 import { chatStore } from '../../../core/store/ChatStore';
 import { mainUrlForStatic } from '../../../core/http/http';
-import { getWithChatAvatar } from '../../../hoc/getWithChatAvatar';
+import { getWithInfoChat } from '../../../hoc/getWithInfoChat';
 class ProfileChat_ extends Block {
   constructor(props: TPropsObject) {
     const info = {
@@ -47,4 +47,4 @@ class ProfileChat_ extends Block {
   }
 }
 
-export const ProfileChat = getWithChatAvatar(ProfileChat_);
+export const ProfileChat = getWithInfoChat(ProfileChat_);

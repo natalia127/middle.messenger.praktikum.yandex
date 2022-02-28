@@ -4,8 +4,9 @@ import { router } from '../router/initRouter';
 import { UserAPI } from '../api/userApi';
 import { TChangeUser, TChangePassword, TSearchUser } from '../typeDate';
 function setUserStore(response: object) {
-  Object.entries(response).forEach(([key, value]) => {
-    userStore.set(key, value);
+  const responseEntries = Object.entries(response);
+  responseEntries.forEach(([key, value], index) => {
+    userStore.set(key, value, index === responseEntries.length - 1);
   });
 }
 
@@ -16,7 +17,9 @@ class UserController {
     this.API.changeUser(data).then((result) => {
       if (result.status === 200) {
         const response = JSON.parse(result.response);
+
         setUserStore(response);
+
         router.go(EPATH.PROFILE);
       } else {
         const response = JSON.parse(result.response);

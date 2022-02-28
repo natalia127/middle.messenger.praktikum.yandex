@@ -2,12 +2,11 @@ import { Block } from '../../../core/block/Block';
 import { TPropsObject } from '../../../core/block/typeBlock';
 import { getTmpl } from './settingsChat.tmpl';
 import { chatStore } from '../../../core/store/ChatStore';
-import { StoreEvents } from '../../../core/store/StoreBase';
 import { ItemSettingsUserChat } from './itemSettingsUserChat';
 import { mainUrlForStatic } from '../../../core/http/http';
 import { Avatar } from '../../../components/avatar/avatar';
 import { chatController } from '../../../core/controllers/chatController';
-import { getWithChatAvatar } from '../../../hoc/getWithChatAvatar';
+import { getWithInfoChat } from '../../../hoc/getWithInfoChat';
 
 const iconPlus = new URL('../../../img/account-plus.svg', import.meta.url);
 const iconMinusChat = new URL('../../../img/account-multiple-minus.svg', import.meta.url);
@@ -65,4 +64,4 @@ class SettingsChat_ extends Block {
   }
 }
 
-export const SettingsChat = getWithChatAvatar(SettingsChat_);
+export const SettingsChat = getWithInfoChat(SettingsChat_);

@@ -16,7 +16,7 @@ export class ItemSettingsUserChat extends Block {
         Avatar
       },
       methods: {
-        async handlerDelUserChat(e) {
+        async handlerDelUserChat() {
           let event = new CustomEvent('delUserChat', {
             bubbles: true,
             detail: {
