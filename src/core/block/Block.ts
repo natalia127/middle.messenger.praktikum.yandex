@@ -286,6 +286,8 @@ export abstract class Block implements IBlock {
           valueAttr = this.methods[value]();
         } else
         if (valueAttr) {
+          console.log(valueAttr);
+
           el.setAttribute(key, valueAttr);
         }
       });
