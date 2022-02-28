@@ -259,11 +259,13 @@ export abstract class Block implements IBlock {
 
   private wrapMethod(nameMethod: string, callBack: Function) {
     let f: Function;
+    console.log(this.methods[nameMethod].name);
+
     if (this.methods[nameMethod].name === 'wrapMethod') {
       f = this.methods[`initial${nameMethod}`];
     } else {
       f = this.methods[nameMethod];
-      this.methods[`initial${nameMethod}`] = f;
+      this.methods[`initial${nameMethod}`] = this.methods[nameMethod];
     }
 
     this.methods[nameMethod] = function wrapMethod() {
