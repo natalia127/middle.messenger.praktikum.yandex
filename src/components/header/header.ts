@@ -29,7 +29,8 @@ class Header_ extends Block {
         },
         getIconHref() {
           const currentPathName = router.getCurrentPath();
-          console.log(currentPathName);
+          console.log(personIcon.href);
+          console.log(chatIcon.href);
 
           if (currentPathName === EPATH.CHAT) {
             return personIcon.href;
