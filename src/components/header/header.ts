@@ -29,12 +29,14 @@ class Header_ extends Block {
         },
         getIconHref() {
           const currentPathName = router.getCurrentPath();
-          console.log(personIcon.href);
-          console.log(chatIcon.href);
 
           if (currentPathName === EPATH.CHAT) {
+            console.log(personIcon.href, 'personIcon.href');
+
             return personIcon.href;
           }
+          console.log(chatIcon.href, 'chatIcon.href');
+
           return chatIcon.href;
         },
         isAuthorizedPaths() {
