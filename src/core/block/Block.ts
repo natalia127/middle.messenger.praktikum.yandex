@@ -261,7 +261,7 @@ export abstract class Block implements IBlock {
     let f: Function;
     console.log(this.methods[nameMethod].name);
 
-    if (this.methods[nameMethod].name === 'wrapMethod') {
+    if (this.methods[nameMethod].name === 'wrapMethod' || !this.methods[nameMethod].name) {
       f = this.methods[`initial${nameMethod}`];
     } else {
       f = this.methods[nameMethod];
