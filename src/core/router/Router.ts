@@ -68,9 +68,7 @@ export class Router extends EventBus {
       return;
     }
 
-    if (this.currentRoute) {
-      this.currentRoute.leave();
-    }
+    this.routes.forEach(route => route.leave());
 
     this.currentRoute = route;
 

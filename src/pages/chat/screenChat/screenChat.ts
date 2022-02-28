@@ -26,7 +26,10 @@ export class ScreenChat extends Block {
       }
     });
     chatStore.on(StoreEvents.Updated, () => {
-      this.currentIdUser = userStore.getState().id;
+      let currentIdUser = userStore.getState().id;
+      if (currentIdUser) {
+        this.currentIdUser = currentIdUser;
+      }
     });
 
     chatStore.on(StoreEvents.Updated, () => {
@@ -66,6 +69,7 @@ export class ScreenChat extends Block {
               content: this.currentMessage,
               type: 'message'
             }));
+            this.currentMessage = '';
           }
         }
       }
