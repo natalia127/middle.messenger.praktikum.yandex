@@ -6,6 +6,8 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "es2020",
-    "isolatedModules": false
+    "isolatedModules": false,
+    "module": "commonjs",
+
  }
 } 

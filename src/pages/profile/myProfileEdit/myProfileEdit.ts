@@ -1,14 +1,38 @@
 import { Input } from '../../../components/input/input';
-import { Block } from '../../../core/Block';
+import { Block } from '../../../core/block/Block';
 
 import { Button } from '../../../components/button/button';
-import { context } from '../tempContext';
-import { TPropsAndChildren } from '../../../core/typeBlock';
+import { TPropsObject } from '../../../core/block/typeBlock';
 import { template } from './myProfileEdit.tmpl';
-import { validateForm, validateInput } from '../../../utils/validate';
-class MyProfileEdit extends Block {
-  constructor(props: TPropsAndChildren) {
-    super(props);
+import { validateAndSend } from '../../../core/utils/validate';
+import { userStore } from '../../../core/store/UserStore';
+import { userController } from '../../../core/controllers/userController';
+import { StoreEvents } from '../../../core/store/StoreBase';
+import { getWithUserDate } from '../../../hoc/getWithUserDate';
+class FormMyProfileEdit extends Block {
+  constructor(props: TPropsObject) {
+    const dataUser = userStore.getState();
+
+    userStore.on(StoreEvents.Updated, ()=> {
+      this.setProps(userStore.getState());
+    });
+    const info = {
+      data: {
+        ...dataUser,
+        ...props
+      },
+      components: {
+        Input,
+        Button
+      },
+      methods: {
+        handlerForm(e: Event) {
+          e.preventDefault();
+          validateAndSend(this, userController, 'changeUser');
+        }
+      }
+    };
+    super(info);
   }
 
   render() {
@@ -16,77 +40,4 @@ class MyProfileEdit extends Block {
   }
 }
 
-export default ()=> (new MyProfileEdit({
-  inputEmail: new Input({
-    placeholder: 'e-mail',
-    class: 'input--outbord',
-    name: 'email',
-    value: context.email,
-    type: 'email',
-    events: {
-      blur: validateInput,
-      focus: validateInput
-    }
-  }),
-  inputLogin: new Input({
-    placeholder: 'Логин',
-    class: 'input--outbord',
-    name: 'login',
-    value: context.login,
-    events: {
-      blur: validateInput,
-      focus: validateInput
-    }
-  }),
-  inputDisplayName: new Input({
-    placeholder: 'Отображаемое имя',
-    class: 'input--outbord',
-    name: 'display_name',
-    value: context.display_name,
-    events: {
-      blur: validateInput,
-      focus: validateInput
-    }
-  }),
-  inputFirstName: new Input({
-    placeholder: 'имя',
-    class: 'input--outbord',
-    name: 'first_name',
-    value: context.first_name,
-    events: {
-      blur: validateInput,
-      focus: validateInput
-    }
-  }),
-  inputSecondName: new Input({
-    placeholder: 'Фамилия',
-    class: 'input--outbord',
-    name: 'second_name',
-    value: context.second_name,
-    events: {
-      blur: validateInput,
-      focus: validateInput
-    }
-  }),
-  inputPhone: new Input({
-    placeholder: 'телефон',
-    class: 'input--outbord',
-    name: 'phone',
-    value: context.phone,
-    events: {
-      blur: validateInput,
-      focus: validateInput
-    }
-  }),
-  button: new Button({
-    value: 'Сохранить',
-    class: 'form__button'
-  }),
-  events: {
-    submit: function (e) {
-      validateForm(e, ()=>{
-        window.location.href = '/';
-      });
-    }
-  }
-}));
+export const MyProfileEdit = getWithUserDate(FormMyProfileEdit);

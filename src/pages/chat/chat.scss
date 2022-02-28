@@ -1,8 +1,18 @@
+@import "./screenChat/screenChat.scss";
+@import "./listChat/listChat.scss";
+@import "./profileChat/profileChat.scss";
+@import "./settingsChat/settingsChat.scss";
+@import "./addChat/addChat.scss";
+
 .chat {
   box-shadow: $base-box-shadow;
 
-  &__screen {
+  &__wrapper-screen {
     flex-grow: 6;
+  }
+
+  &__screen {
+    height: 100%;
   }
 
   &__listChat {
@@ -13,7 +23,7 @@
     flex-grow: 3;
     position: relative;
     padding: 7em 1.5em 2em;
-    min-width: 27%;
+    min-width: 30%;
   }
 
   &__iSetting {
@@ -27,5 +37,28 @@
     &--active {
       right: 20em;
     }
+  }
+
+  &__choice {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__infoChat {
+    height: 100%;
+  }
+
+  &__addChat {
+    position: absolute;
+    z-index: 5;
+    margin: auto;
+    top: 30%;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 20%;
   }
 }

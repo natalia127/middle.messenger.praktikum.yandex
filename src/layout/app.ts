@@ -1,27 +1,34 @@
-import header from '../modules/header/header';
-import { Block } from '../core/Block';
-import { TPropsAndChildren } from '../core/typeBlock';
-
-import { getComponentTmpl } from '../core/router/routing';
-
-let main = getComponentTmpl();
-
+import { Header } from '../components/header/header';
+import { Block } from '../core/block/Block';
+import { TPropsObject } from '../core/block/typeBlock';
+import { getComponentTmpl, registerRouts } from '../core/router/routing';
+import { authController } from '../core/controllers/authController';
 class App extends Block {
-  constructor(props: TPropsAndChildren) {
+  constructor(props: TPropsObject) {
     super(props);
+    authController.authorization();
+    registerRouts();
+  }
+
+  componentDidMount(): void {
+    getComponentTmpl();
   }
 
   render() {
-    return `<div style="height: 100vh">
-           {% header %}
-           <div class="container fullContainer main">{% main %}</div>
+    return `
+    <div style="height: 100vh">
+      <Header @click="clickHandler"/>
+      <div class="container fullContainer main js-router">
+          
+      </div>   
    </div>`;
   }
 }
 
 export const app = new App(
   {
-    header,
-    main
+    components: {
+      Header
+    }
   }
 );

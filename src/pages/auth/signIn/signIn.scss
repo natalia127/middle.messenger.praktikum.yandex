@@ -1,0 +1,50 @@
+.form {
+  width: 25rem;
+  background-color: $base-color;
+  box-shadow: $base-box-shadow;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 2rem 1.5rem;
+
+  &__title {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  &__inputs {
+    display: flex;
+    flex-direction: column;
+    margin: 4rem 0;
+  }
+
+  &__input {
+    margin: 1rem 0;
+  }
+
+  &__button {
+    margin: 0 auto;
+    box-shadow: $base-box-shadow;
+
+    &:active {
+      box-shadow: none;
+    }
+  }
+
+  &__text {
+    margin-top: 3em;
+    text-align: center;
+  }
+
+  &__link {
+    text-decoration: none;
+    color: $aque;
+    cursor: pointer;
+  }
+
+  &__errorSendMessage {
+    color: $warning;
+    padding-left: 1.5em;
+    padding-top: 0.5em;
+    font-size: 0.7;
+  }
+}
