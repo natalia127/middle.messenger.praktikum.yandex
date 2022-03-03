@@ -1,6 +1,7 @@
 {
   "presets": [ 
     "@babel/preset-typescript",
-    "@parcel/babel-preset-env"],
-  "plugins": ["@parcel/babel-plugin-transform-runtime"]
+    "@babel/babel-preset-env",
+  ],
+  "plugins": ["@babel/babel-plugin-transform-runtime"]
 }
