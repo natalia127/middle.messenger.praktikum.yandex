@@ -13,7 +13,7 @@ export class MyProfile extends Block {
   constructor(props: TPropsObject) {
     const dataUser = userStore.getState();
     userStore.on(StoreEvents.Updated, ()=> {
-      const newProps = { ...userStore.getState() };
+      const newProps: TPropsObject = { ...userStore.getState() };
 
       if (newProps.avatar) {
         newProps.pathAvatar = mainUrlForStatic + newProps.avatar;

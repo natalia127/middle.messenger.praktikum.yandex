@@ -12,14 +12,45 @@ import { mainUrlForStatic } from '../../../core/http/http';
 const iconClip = new URL('../../../img/clip.svg', import.meta.url);
 const iconSend = new URL('../../../img/send.svg', import.meta.url);
 
+let timeLastMessage: number = Date.now();
 export class ScreenChat extends Block {
   private currentMessage = '';
 
   private currentIdUser: number;
 
-  private timeLastMessage: Date = Date.now();
-
   constructor(props: TPropsObject) {
+    super({
+      data: {
+        iconClip: iconClip.href,
+        iconSend: iconSend.href,
+        idChat: null,
+        messages: [],
+        ...props
+      },
+      components: {
+        Input,
+        Avatar
+      },
+      methods: {
+        handlerPrintMessage(e: CustomEvent) {
+          this.currentMessage = e.detail.value;
+        },
+        handlerSendMessage() {
+          if (!this.currentMessage) {
+            return;
+          }
+          const timeNow = Date.now();
+          if (timeNow - timeLastMessage > 1000) {
+            const socket = chatStore.getState().chatsConnect[this.props.idChat];
+            socket.send(JSON.stringify({
+              content: this.currentMessage,
+              type: 'message'
+            }));
+            this.currentMessage = '';
+          }
+        }
+      }
+    });
     document.addEventListener('keydown', (e)=>{
       if (e.key === 'Enter' && !!this.currentMessage) {
         this.methods.handlerSendMessage();
@@ -41,43 +72,12 @@ export class ScreenChat extends Block {
         });
       }
     });
-
-    const info = {
-      data: {
-        iconClip: iconClip.href,
-        iconSend: iconSend.href,
-        idChat: null,
-        messages: [],
-        ...props
-      },
-      components: {
-        Input,
-        Avatar
-      },
-      methods: {
-        handlerPrintMessage(e: CustomEvent) {
-          this.currentMessage = e.detail.value;
-        },
-        handlerSendMessage() {
-          if (!this.currentMessage) {
-            return;
-          }
-          const timeNow = Date.now();
-          if (timeNow - this.timeLastMessage > 1000) {
-            const socket = chatStore.getState().chatsConnect[this.props.idChat];
-            socket.send(JSON.stringify({
-              content: this.currentMessage,
-              type: 'message'
-            }));
-            this.currentMessage = '';
-          }
-        }
-      }
-    };
-    super(info);
   }
 
-  protected async componentDidUpdate(oldProps: TPropsObject, newProps: TPropsObject): boolean {
+  protected async componentDidUpdate(
+    oldProps: TPropsObject,
+    newProps: TPropsObject
+  ): Promise<boolean | Error> {
     if (oldProps.idChat === newProps.idChat) {
       return true;
     }
@@ -104,11 +104,13 @@ export class ScreenChat extends Block {
     let lastIdUser: number;
 
     if (messagesChat) {
-      s = messagesChat.reduce((_acc, message, index) => {
+      const sr = messagesChat.reduce((_acc, message, index) => {
         let acc = _acc;
         const userId = +message.user_id;
         const infoUser = infoChat.find((user)=> user.id === userId);
-
+        if (!infoUser) {
+          return acc;
+        }
         let avatar = '';
         if (infoUser.avatar) {
           const pathAvatar = mainUrlForStatic + infoUser.avatar;
@@ -148,6 +150,9 @@ export class ScreenChat extends Block {
         }
         return acc;
       }, '');
+      if (sr) {
+        s = sr;
+      }
     }
 
     return getScreenChat(s);

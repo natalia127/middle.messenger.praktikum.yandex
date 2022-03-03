@@ -50,14 +50,15 @@ class SettingsChat_ extends Block {
     if (infoUsersChat) {
       usersChat = infoUsersChat.reduce((acc: string, infoUser) => {
         const pathAvatar = infoUser.avatar ? mainUrlForStatic + infoUser.avatar : '';
-        acc += `
+        let _acc = acc;
+        _acc += `
           <ItemSettingsUserChat 
-            ::login="${infoUser.displayName || infoUser.login}"
+            ::login="${infoUser.display_name || infoUser.login}"
             ::idUser="${infoUser.id}"
             ::pathAvatar="${pathAvatar}"
           /> 
         `;
-        return acc;
+        return _acc;
       }, '');
     }
     return getTmpl(usersChat);

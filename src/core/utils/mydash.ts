@@ -113,7 +113,7 @@ export const getObjIntersection = function (obj1: {
   }, {});
 };
 
-export const setLink = (target, path, value)=>{
+export const setLink = (target: Record<string, any>, path: string[], value: unknown)=>{
   path.reduce((acc, p, index) => {
     if (index === path.length - 1) {
       acc[p] = value;

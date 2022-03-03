@@ -4,17 +4,17 @@ import { ChatAPI } from '../api/chatApi';
 import {
   TDelUsersChat, TAddChat, TAddUserChat, TDelChat, TChangeAvatarChat
 } from '../typeDate';
-
-class ChatController {
+import { BaseController } from './baseController';
+class ChatController extends BaseController {
   API = new ChatAPI();
 
   public async joinChat(chatId: number) {
     if (chatStore.getState().chatsConnect[chatId]) {
       return true;
     }
-    const result = await this.API.getTokenChat(chatId).then((result) => {
-      if (result.status === 200) {
-        const response = JSON.parse(result.response);
+    const result = await this.API.getTokenChat(chatId).then((r) => {
+      if (r.status === 200) {
+        const response = JSON.parse(r.response);
         const tokenValue = response.token;
 
         const userId = userStore.getState().id;
@@ -25,10 +25,10 @@ class ChatController {
     }).then(async ({ userId, tokenValue }:{ userId: number, tokenValue: string })=>{
       const socket = await this.API.connectMessaging({ userId, chatId, tokenValue });
       await this.setListenersOnSocket(socket, chatId);
-      chatStore.setLink(['chatsConnect', chatId], socket);
+      chatStore.setLink(['chatsConnect', chatId.toString()], socket);
       this.getOldMessage(chatId, 0);
       return true;
-    }).catch((e)=>{
+    }).catch(()=>{
     });
 
     return result;
@@ -60,8 +60,8 @@ class ChatController {
       chatStore.set('needUpdate', true);
     });
 
-    socket.addEventListener('error', event => {
-      console.log('Ошибка', event.message);
+    socket.addEventListener('error', () => {
+      console.log('Ошибка');
     });
 
     return new Promise((resolve) => {
@@ -86,7 +86,7 @@ class ChatController {
       if (result.status === 200) {
         const response = JSON.parse(result.response);
         chatStore.set('chats', response);
-        if (chatStore.getState().errorGetChat) {
+        if (chatStore.getState().errorGetChats) {
           chatStore.set('errorGetChat', false);
         }
         return true;
@@ -118,6 +118,7 @@ class ChatController {
     });
   }
 
+  // eslint-disable-next-line consistent-return
   public async getUsersChat(id: number) {
     if (chatStore.getState().chatsUser[id]) {
       return true;

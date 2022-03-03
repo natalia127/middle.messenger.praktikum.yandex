@@ -103,7 +103,7 @@ export const validate = function (type: string, value: string): resultValid {
   return result;
 };
 
-export const validateInput = function (element: IBlock) {
+export const validateInput = function v(element: IBlock) {
   const resultValidate = validate(element.props.name, element.props.value);
   if (resultValidate.isValid && element.props.isError) {
     element.setProps({
@@ -120,7 +120,12 @@ export const validateInput = function (element: IBlock) {
   return resultValidate.isValid;
 };
 
-export const validateAndSend = async function v<T>(block: IBlock, target: T, nameCallback: string) {
+// eslint-disable-next-line consistent-return
+export const validateAndSend = async function v<T, K extends keyof T>(
+  block: IBlock,
+  target: T,
+  nameCallback: K
+) {
   if (block.children) {
     let isValidForm = true;
     const values: {[key: string]: any} = {};
@@ -132,7 +137,11 @@ export const validateAndSend = async function v<T>(block: IBlock, target: T, nam
     });
 
     if (isValidForm) {
-      let result = await target[nameCallback](values);
+      const f = target[nameCallback];
+      if (typeof f !== 'function') {
+        return false;
+      }
+      let result = await f.call(target, values);
 
       if (result === undefined || result) {
         Object.values(block.children).forEach(element => {

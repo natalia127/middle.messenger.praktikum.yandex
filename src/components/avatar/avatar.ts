@@ -14,10 +14,11 @@ export class Avatar extends Block {
       },
 
       methods: {
-        handlerClick(e) {
+        handlerClick(e: Event) {
+          const target = e.target as HTMLInputElement;
           let event = new CustomEvent('handlerClickAvatar', {
             detail: {
-              file: e.target.files[0]
+              file: (target.files as FileList)[0]
             },
             bubbles: true
           });

@@ -7,7 +7,7 @@
     "build": "webpack --progress  --mode production",
     "start": "npm run build && node ./static/server.js",
     "test": "mocha -r jsdom-global/register",
-    "server": "node .static/server.js",
+    "server": "node ./static/server.js",
     "lint": "npm-run-all lint-scripts lint-templates lint-styles",
     "lint-scripts": "eslint ./src/**/*.ts --fix",
     "lint-templates": "pug-lint ./src --fix",
@@ -27,7 +27,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "7.12.1",
+    "@babel/cli": "^7.17.6",
     "@babel/core": "7.12.3",
     "@babel/preset-env": "7.12.1",
     "@babel/preset-typescript": "7.12.1",

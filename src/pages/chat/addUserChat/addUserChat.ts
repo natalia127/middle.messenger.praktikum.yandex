@@ -30,7 +30,9 @@ export class AddUserChat extends Block {
 
           if (isCancel) {
             const resultSearchUser = userStore.getState().resultSearchUser;
-
+            if (!resultSearchUser.id) {
+              return;
+            }
             const isSuccessfully = await chatController.addUsersChat({
               users: [resultSearchUser.id],
               chatId: this.props.idActiveChat

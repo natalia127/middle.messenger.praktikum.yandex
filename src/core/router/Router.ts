@@ -1,5 +1,5 @@
 import { Route } from './Route';
-import { IRoute } from './typeRouting';
+import { IRoute, IRouter } from './typeRouting';
 import {
   Constructable, IBlock
 } from '../../core/block/typeBlock';
@@ -8,7 +8,7 @@ import { EventBus } from '../EventBus';
 export enum EROUTER_EVENTS {
   FLOW_BT = 'flow:before-transition'
 }
-export class Router extends EventBus {
+export class Router extends EventBus implements IRouter {
   routes: IRoute[];
 
   private errorRoutes: IRoute;
@@ -21,8 +21,11 @@ export class Router extends EventBus {
 
   private rootQuery: string;
 
+  static __instance: any;
+
   constructor(rootQuery: string) {
     if (Router.__instance) {
+      // eslint-disable-next-line no-constructor-return
       return Router.__instance;
     }
     super();
@@ -43,11 +46,11 @@ export class Router extends EventBus {
   }
 
   start() {
-    window.onpopstate = event => {
+    window.onpopstate = (event: PopStateEvent) => {
       if (!event.currentTarget) {
         return;
       }
-      const pathname = event.currentTarget.location.pathname;
+      const pathname = (event.currentTarget as Document).location.pathname;
       const response: boolean = this.routerDidTransition(pathname);
       if (!response) {
         return;
@@ -68,7 +71,7 @@ export class Router extends EventBus {
       return;
     }
 
-    this.routes.forEach(route => route.leave());
+    this.routes.forEach(r => r.leave());
 
     this.currentRoute = route;
 

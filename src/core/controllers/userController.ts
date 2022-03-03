@@ -3,6 +3,8 @@ import { EPATH } from '../router/namePath';
 import { router } from '../router/initRouter';
 import { UserAPI } from '../api/userApi';
 import { TChangeUser, TChangePassword, TSearchUser } from '../typeDate';
+import { BaseController } from './baseController';
+
 function setUserStore(response: object) {
   const responseEntries = Object.entries(response);
   responseEntries.forEach(([key, value], index) => {
@@ -10,7 +12,7 @@ function setUserStore(response: object) {
   });
 }
 
-class UserController {
+class UserController extends BaseController {
   API = new UserAPI();
 
   public changeUser(data: TChangeUser) {
@@ -29,9 +31,10 @@ class UserController {
   }
 
   public changePassword(data: TChangePassword) {
-    const payload: Partial<TChangePassword> = {};
-    payload.oldPassword = data.oldPassword;
-    payload.newPassword = data.newPassword;
+    const payload: TChangePassword = {
+      oldPassword: data.oldPassword,
+      newPassword: data.newPassword
+    };
     this.API.changePassword(payload).then((result) => {
       if (result.status === 200) {
         router.go(EPATH.PROFILE);
@@ -54,9 +57,9 @@ class UserController {
         const response = JSON.parse(result.response);
 
         userStore.set('resultSearchUser', response[0]);
-      } else {
-        return false;
+        return true;
       }
+      return false;
     });
   }
 }

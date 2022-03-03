@@ -1,4 +1,4 @@
-export const createEl = (nameTag, attributes) =>{
+export const createEl = (nameTag: string, attributes: {key: string, value: string}[]) =>{
   const el = document.createElement(nameTag);
   attributes.forEach((att => {
     el.setAttribute(att.key, att.value);

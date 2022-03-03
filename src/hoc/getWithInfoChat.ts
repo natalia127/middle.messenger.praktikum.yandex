@@ -18,7 +18,7 @@ export function getWithInfoChat(Component: Constructable<IBlock>) {
 
       chatStore.on(StoreEvents.Updated, () => {
         const infoChat = findChat(this.props.idChat);
-        if (infoChat) {
+        if (infoChat && infoChat.avatar) {
           const pathAvatar = getPathAvatar(infoChat.avatar);
 
           this.setProps({ pathAvatar });
@@ -26,10 +26,10 @@ export function getWithInfoChat(Component: Constructable<IBlock>) {
       });
     }
 
-    componentDidUpdate(oldProps, newProps) {
+    componentDidUpdate(_oldProps: TPropsObject, newProps: TPropsObject) {
       if (!newProps.idChat || newProps.pathAvatar) return true;
       const infoChat = findChat(newProps.idChat);
-      if (!infoChat.avatar) {
+      if (infoChat && !infoChat.avatar) {
         return true;
       }
       if (infoChat && infoChat.avatar) {

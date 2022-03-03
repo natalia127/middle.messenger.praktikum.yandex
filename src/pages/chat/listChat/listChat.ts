@@ -34,7 +34,8 @@ export class ListChat extends Block {
   }
 
   render(): string {
-    const itemsChat = chatStore.getState().chats.reduce((acc, item) => {
+    const itemsChat = chatStore.getState().chats.reduce((acc_, item) => {
+      let acc = acc_;
       const lastMessage = item.last_message ? item.last_message.content : '';
       const unreadCount = item.unread_count || '';
       const pathAvatar = item.avatar ? mainUrlForStatic + item.avatar : '';
