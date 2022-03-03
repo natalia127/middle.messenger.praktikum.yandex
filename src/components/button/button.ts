@@ -1,18 +1,25 @@
-import { Block } from '../../core/Block';
-import { TPropsAndChildren } from '../../core/typeBlock';
+import { Block } from '../../core/block/Block';
+import { TPropsObject } from '../../core/block/typeBlock';
 
 export class Button extends Block {
-  constructor(props: TPropsAndChildren) {
+  constructor(props: TPropsObject) {
     const context = {
       value: '',
       class: ' '
     };
-    const newProps = { ...context, ...props };
-    super(newProps);
+    const info = {
+      data: { ...context, ...props },
+      methods: {
+        handlerSubmit(e: Event) {
+          e.preventDefault();
+        }
+      }
+    };
+    super(info);
   }
 
   render() {
     return `
-     <button class="{{class}} button" >{{value}}</button>`;
+     <button class="button {{class}} ">{{value}}</button>`;
   }
 }

@@ -1,49 +1,33 @@
 import {
-  SIGNIN, SIGNUP, PROFILE, EDIT_PROFILE, EDIT_PASSWORD, CHAT, PAGE500
+  EPATH
 } from './namePath';
-import MyProfile from '../../pages/profile/myProfile/myProfile';
-import EditProfile from '../../pages/profile/myProfileEdit/myProfileEdit';
-import EditPassword from '../../pages/profile/passwordEdit/passwordEdit';
-import Chat from '../../pages/chat/chat';
-import Page404 from '../../pages/error/page404';
-import Page500 from '../../pages/error/page500';
-import Auth from '../../pages/auth/auth';
-import { IBlock } from '../typeBlock';
+import { MyProfile } from '../../pages/profile/myProfile/myProfile';
+import { MyProfileEdit } from '../../pages/profile/myProfileEdit/myProfileEdit';
+import { PasswordEdit } from '../../pages/profile/passwordEdit/passwordEdit';
+import { Chat } from '../../pages/chat/chat';
+import { Page404 } from '../../pages/error/page404';
+import { Page500 } from '../../pages/error/page500';
+import { Auth } from '../../pages/auth/auth';
+import { router } from './initRouter';
+import { authStore } from '../store/AuthStore';
+import { authorizedPaths } from './namePath';
 
+export function registerRouts() {
+  router.setCallbackDidTransition(function (pathname: string) {
+    if (!authStore.getState().isAuth && authorizedPaths.includes(pathname)) {
+      router.go(EPATH.SIGNIN);
+      return false;
+    }
+    return true;
+  });
+  router.use(EPATH.CHAT, Chat);
+  router.use(EPATH.PROFILE, MyProfile);
+  router.use(EPATH.EDIT_PROFILE, MyProfileEdit);
+  router.use(EPATH.EDIT_PASSWORD, PasswordEdit);
+  router.use(EPATH.SIGNIN, Auth);
+  router.use(EPATH.SIGNUP, Auth);
+  router.use('/404', Page404, true);
+}
 export function getComponentTmpl() {
-  let path: string = window.location.pathname;
-
-  if (path !== CHAT && !path.endsWith('.html')) {
-    path += '.html';
-  }
-  let block: IBlock;
-  switch (path) {
-    case PROFILE:
-      block = MyProfile();
-      break;
-    case EDIT_PROFILE:
-      block = EditProfile();
-      break;
-    case EDIT_PASSWORD:
-      block = EditPassword();
-      break;
-    case CHAT:
-      block = Chat();
-      break;
-    case PAGE500:
-      block = Page500();
-      break;
-    case SIGNIN:
-      block = Auth();
-      break;
-    case SIGNUP:
-      block = Auth();
-      break;
-    default:
-      block = Page404();
-
-      break;
-  }
-
-  return block;
+  router.start();
 }

@@ -1,6 +1,22 @@
 .input {
   font-size: 1em;
 
+  &__messageError {
+    color: $warning;
+    height: 0;
+    opacity: 0;
+    position: relative;
+    transition: height 0.3s ease-out;
+  }
+
+  &__messageText {
+    line-height: 0.9em;
+    transition: font-size 0.3s ease;
+    overflow: hidden;
+    text-transform: lowercase;
+    padding-left: 1em;
+  }
+
   &--withBord {
     line-height: 1.2;
     display: block;
@@ -13,6 +29,28 @@
     &.error {
       box-shadow: 0 5px 20px 0 rgb(250 66 81 / 32%);
     }
+
+    & + .input__messageError {
+      top: 0.3em;
+      &--active {
+        height: 1.2em;
+        opacity: 1;
+        margin-bottom: 0.2em;
+        font-size: 0.8em;
+
+        // &:hover .input__messageText {
+        //   position: absolute;
+        //   font-size: 1em;
+        //   z-index: 1;
+        //   background-color: white;
+        //   overflow: visible;
+        //   line-height: 1em;
+        //   padding: 0.5em;
+        //   border-radius: 0.5em;
+        //   color: $grey;
+        // }
+      }
+    }
   }
 
   &--outbord {
@@ -23,9 +61,24 @@
     &.error {
       border-bottom-color: $warning;
     }
+
+    & + .input__messageError {
+      position: absolute;
+      top: -0.9em;
+      right: 0.5em;
+      font-size: 0.7em;
+
+      &--active {
+        opacity: 1;
+      }
+    }
   }
 
   &.error {
     color: $warning;
   }
+}
+
+.input-wrapper {
+  position: relative;
 }

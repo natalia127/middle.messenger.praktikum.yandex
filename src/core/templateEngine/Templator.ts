@@ -1,10 +1,10 @@
-// TODO заменить магические цифры
-
-import { getPropertyCtx, getTSettingsNode, setAttributes } from './utilsTemplator';
+import { getPropertyCtx, getTSettingsNode } from './utilsTemplator';
 import {
   TSettingsNode, TSettingsTextNode, TTemplatorStruct,
-  TCtx
+  TCtx, TAttribute
 } from './typeTemplator';
+import { EDATA_PARAMS } from '../enumDataParams';
+export const charSeparate = '##';
 
 export class Templator {
   TEMPLATE_REGEXP = /\{\{([^}}].*?)\}\}/gi;
@@ -28,7 +28,7 @@ export class Templator {
     return result || document.createElement('div');
   }
 
-  compileRawTmpl(): string {
+  private compileRawTmpl(): string {
     let tmpl: string = this.replaceOnCtxValue();
     tmpl = this.insertChildren(tmpl);
     return tmpl;
@@ -36,13 +36,14 @@ export class Templator {
 
   private replaceOnCtxValue() {
     const ctx: TCtx = this.ctx;
-    let tmpl: string = this.replaceBlockIfElse();
+    let tmpl: string = this._rawTemplate;
 
     const regExp: RegExp = /\{\{(.*?)\}\}/gis;
     let key: RegExpExecArray| null = regExp.exec(tmpl);
 
     while (key) {
       const rawValue = key[1];
+      const rawTemplateValue = key[0];
       if (rawValue) {
         const tmplValue: string = rawValue.trim();
         let data: unknown = getPropertyCtx(ctx, tmplValue);
@@ -51,36 +52,9 @@ export class Templator {
           data = data.toString();
         }
         if (typeof data === 'string') {
-          tmpl = tmpl.replace(new RegExp(key[0], 'gi'), data);
-          regExp.lastIndex = regExp.lastIndex - key[0].length + data.length;
+          tmpl = tmpl.replace(new RegExp(rawTemplateValue, 'gi'), data);
+          regExp.lastIndex = regExp.lastIndex - rawTemplateValue.length + data.length;
         }
-      }
-      key = regExp.exec(tmpl);
-    }
-    return tmpl;
-  }
-
-  replaceBlockIfElse() {
-    // TODO дополнить блоками elseif
-    const ctx = this.ctx;
-    let tmpl: string = this._rawTemplate;
-    const regExp: RegExp = /\{%\s*if\s*(.[^\s'",]+)\s*?%\}(.*?)((\{%\s*else\s*%\})(.*?))?(\{%\s*endif\s*%\})/gis;
-
-    let key: RegExpExecArray | null = regExp.exec(tmpl);
-
-    while (key) {
-      const value = key[1];
-      if (Object.prototype.hasOwnProperty.call(ctx, value)) {
-        let valueReplace = ctx[value] ? key[2] : '';
-        if (ctx[value]) {
-          valueReplace = key[2];
-        } else if (key[3]) {
-          valueReplace = key[5];
-        } else {
-          valueReplace = '';
-        }
-        tmpl = tmpl.replace(key[0], valueReplace);
-        regExp.lastIndex = regExp.lastIndex - key[0].length + valueReplace.length;
       }
       key = regExp.exec(tmpl);
     }
@@ -98,8 +72,11 @@ export class Templator {
       let _tmpl: string = tmpl;
       const nodeStruct: TSettingsNode | TSettingsTextNode = getTSettingsNode(tmpl);
       this.stackTreeEl.push(nodeStruct);
-
-      if (nodeStruct.typeEl === 'el' && nodeStruct.typeTag === 'fullTag') {
+      if (nodeStruct.typeEl === 'el' && nodeStruct.isChild) {
+        nodeStruct.el = this.getMockChildren(nodeStruct);
+      } else if (nodeStruct.typeEl === 'el' && nodeStruct.typeTag === 'singleTag') {
+        nodeStruct.el = this.getNewElement(nodeStruct.name, nodeStruct.attributes);
+      } else if (nodeStruct.typeEl === 'el' && nodeStruct.typeTag === 'fullTag') {
         completeTreeEl(nodeStruct.content);
       }
       if (nodeStruct.indexEndInTmpl) {
@@ -113,6 +90,43 @@ export class Templator {
     return structEl.el;
   }
 
+  private getNewElement(nameTag: string, attributes: TAttribute[]) : HTMLElement {
+    const el = document.createElement(nameTag);
+    this.setAttributes(el, attributes);
+    return el;
+  }
+
+  private setAttributes(el: HTMLElement, attributes: TAttribute[]) {
+    attributes.forEach((att => {
+      if (att.key === 'class') {
+        att.value.split(' ').filter(a => a).forEach((className => el.classList.add(className)));
+      } else if (att.key.startsWith('@')) {
+        const paramsEvents = el.getAttribute(EDATA_PARAMS.EVENTS) || '';
+        el.setAttribute(EDATA_PARAMS.EVENTS, `${paramsEvents}${att.key.slice(1)}${charSeparate}${att.value};`);
+      } else if (att.key.startsWith('::')) {
+        const paramsProps = el.getAttribute(EDATA_PARAMS.PROPS) || '';
+        let value = att.value;
+        if (value.startsWith('%withContext#')) {
+          const key = value.slice('%withContext#'.length);
+          value = this.ctx[key];
+          if (typeof value === 'function') {
+            value = key;
+          }
+        }
+        if (!value) {
+          return;
+        }
+        el.setAttribute(EDATA_PARAMS.PROPS, `${paramsProps}${att.key.slice(2)}${charSeparate}${value};`);
+      } else if (att.key === 't-if') {
+        el.setAttribute(EDATA_PARAMS.CONDITION_IF, att.value);
+      } else if (att.key === 't-else') {
+        el.setAttribute(EDATA_PARAMS.CONDITION_ELSE, att.value);
+      } else {
+        el.setAttribute(att.key, att.value);
+      }
+    }));
+  }
+
   private consetrateEl(treeDepth: number) {
     const structFirstEl = this.stackTreeEl[0] as TSettingsNode;
     if (this.stackTreeEl.length === 1 && structFirstEl.el) {
@@ -120,8 +134,8 @@ export class Templator {
     }
     let nCurrentEl = this.stackTreeEl.length - 1 - treeDepth;
     const structEl = this.stackTreeEl[nCurrentEl] as TSettingsNode;
-    const rootEl = document.createElement(structEl.name);
-    setAttributes(rootEl, structEl.attributes);
+
+    const rootEl = this.getNewElement(structEl.name, structEl.attributes);
     for (nCurrentEl++; nCurrentEl < this.stackTreeEl.length; nCurrentEl++) {
       const currentEl = this.stackTreeEl[nCurrentEl];
 
@@ -138,16 +152,25 @@ export class Templator {
     lastEl.el = rootEl;
   }
 
+  private getMockChildren(params: TSettingsNode): HTMLElement {
+    params.attributes.push({
+      key: EDATA_PARAMS.CHILD,
+      value: params.name
+    });
+    return this.getNewElement('div', params.attributes);
+  }
+
   private insertChildren(tmpl: string) {
     let _tmpl: string = tmpl;
     const regChildrenComponent: RegExp = /{%((\s*(\w+)\s*(context:\s*{(.*?)}\s*)?)+?)%}/gis;
     let key = regChildrenComponent.exec(_tmpl);
     while (key) {
       const nameComponent: string = key[3];
+      const rawTemplateChild = key[0];
       const child = this.ctx[nameComponent.trim()];
       if (child && typeof child === 'string') {
-        _tmpl = _tmpl.replace(key[0], child);
-        regChildrenComponent.lastIndex += (-key[0].length + child.length);
+        _tmpl = _tmpl.replace(rawTemplateChild, child);
+        regChildrenComponent.lastIndex += (-rawTemplateChild.length + child.length);
       }
 
       key = regChildrenComponent.exec(_tmpl);

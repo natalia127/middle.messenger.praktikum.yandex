@@ -1,56 +1,118 @@
-import listChat from '../../modules/listChat/listChat';
-import profileChat from '../../modules/profileChat/profileChat';
-import settingsChat from '../../modules/settingsChat/settingsChat';
-import screenChat from '../../modules/screenChat/screenChat';
-import { Block } from '../../core/Block';
-import { TPropsAndChildren } from '../../core/typeBlock';
-
+import { ListChat } from './listChat/listChat';
+import { ProfileChat } from './profileChat/profileChat';
+import { SettingsChat } from './settingsChat/settingsChat';
+import { ScreenChat } from './screenChat/screenChat';
+import { Block } from '../../core/block/Block';
+import { TPropsObject } from '../../core/block/typeBlock';
+import { chat } from './chat.tmpl';
+import { AddChat } from './addChat/addChat';
+import { AddUserChat } from './addUserChat/addUserChat';
+import { DelUserChat } from './delUserChat/delUserChat';
+import { DelChat } from './delChat/delChat';
+import { Blackout } from '../../components/blackout/blackout';
+import { chatStore } from '../../core/store/ChatStore';
+import { StoreEvents } from '../../core/store/StoreBase';
+import { chatController } from '../../core/controllers/chatController';
 const iSetting = new URL('../../img/cog-outline.svg', import.meta.url);
 const iProfileChat = new URL('../../img/account-group.svg', import.meta.url);
-class Chat extends Block {
-  constructor(props: TPropsAndChildren) {
-    super(props);
+export class Chat extends Block {
+  constructor(props: TPropsObject) {
+    chatStore.on(StoreEvents.Updated, () => {
+      const isActiveChat = chatStore.getState().chats
+        .find(c => c.id === +this.props.idActiveChat);
+
+      if (!isActiveChat && this.props.idActiveChat) {
+        this.methods.handlerChatDeleted();
+      }
+    });
+    const info = {
+      data: {
+        iSetting: iSetting.href,
+        iProfileChat: iProfileChat.href,
+        classIcon: ' ',
+        isProfileChat: true,
+        idActiveChat: null,
+        nameActiveChat: null,
+        needAddChat: false,
+        needAddUserChat: false,
+        needBlackout: false,
+        needDelUserChat: false,
+        needDelChat: false,
+        loginDelChat: '',
+        idDelUser: null,
+        ...props
+      },
+      components: {
+        ListChat,
+        ScreenChat,
+        ProfileChat,
+        SettingsChat,
+        AddChat,
+        Blackout,
+        AddUserChat,
+        DelUserChat,
+        DelChat
+      },
+      methods: {
+        changeScreenInfoChat() {
+          let isProfileChat = !this.props.isProfileChat;
+          this.setProps({ isProfileChat });
+        },
+        showAddChat() {
+          this.setProps({
+            needAddChat: true,
+            needBlackout: true
+          });
+        },
+        showAddUserChat() {
+          this.setProps({
+            needAddUserChat: true,
+            needBlackout: true
+          });
+        },
+        showDelUserChat(e: CustomEvent) {
+          this.setProps({
+            needDelUserChat: true,
+            needBlackout: true,
+            loginDelChat: e.detail.login,
+            idDelUser: e.detail.idUser
+          });
+        },
+        showDelChat() {
+          this.setProps({
+            needDelChat: true,
+            needBlackout: true
+          });
+        },
+        hideModal() {
+          this.setProps({
+            needAddChat: false,
+            needBlackout: false,
+            needAddUserChat: false,
+            needDelUserChat: false,
+            needDelChat: false
+          });
+        },
+        async selectChat(e: CustomEvent) {
+          const idChat = e.detail.idChat;
+          if (idChat && this.props.idActiveChat !== idChat) {
+            await chatController.getUsersChat(idChat);
+
+            this.setProps({
+              idActiveChat: idChat,
+              nameActiveChat: e.detail.nameChat
+            });
+          }
+        },
+        handlerChatDeleted() {
+          this.setProps({ idActiveChat: null });
+        }
+      }
+    };
+    super(info);
   }
 
   render(): string {
-    const chat: string = `<div class="chat row fullContainer">
-
-      <div class="chat__listChat">{% listChat %}</div>
-      <div class="fullContainer chat__screen">{% screenChat %}</div>
-      <div class="chat__profileChat">
-      <div class="js-icon chat__iSetting {{classIcon}}">
-        {% if isProfileChat %}
-          <img src="{{ iSetting }}" alt=" " />
-        {% else %}
-          <img src="{{ iProfileChat }}" alt=" " />
-        {% endif %}
-      </div>
-      {% if isProfileChat %}
-        {% profileChat %}
-      {% else %}
-        {% settingsChat %}
-      {% endif %}
-      </div>
-     </div>
-   `;
     return chat;
   }
 }
-export default ()=> (new Chat({
-  listChat: listChat(),
-  screenChat: screenChat(),
-  profileChat: profileChat(),
-  settingsChat: settingsChat(),
-  iSetting: iSetting.href,
-  iProfileChat: iProfileChat.href,
-  classIcon: ' ',
-  isProfileChat: true,
-  innerEvents: [{
-    selector: '.js-icon',
-    click: function () {
-      let isProfileChat = !this.props.isProfileChat;
-
-      this.setProps({ isProfileChat });
-    }
-  }]
-}));
