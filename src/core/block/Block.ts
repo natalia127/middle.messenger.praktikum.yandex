@@ -198,9 +198,9 @@ export abstract class Block implements IBlock {
     this.element.appendChild(content);
 
     this.setContent(content);
-    process.nextTick(()=> {
+    setTimeout(()=> {
       this.eventBus.emit(EEVENTS.FLOW_RU);
-    });
+    }, 50);
   }
 
   private replaceMock(content: Element) {
@@ -328,11 +328,11 @@ export abstract class Block implements IBlock {
         }
       }
 
-      this.replaceWith(stubChild, child, content);
+      this.replaceWith(stubChild, child);
     });
   }
 
-  private replaceWith(stub: Element, block: IBlock, shellContent: Element) {
+  private replaceWith(stub: Element, block: IBlock) {
     stub.replaceWith(block.getContent());
   }
 
@@ -387,7 +387,7 @@ export abstract class Block implements IBlock {
   }
 
   private _componentDidUpdate(oldProps: TPropsObject, newProps: TPropsObject): void {
-    const response: boolean = this.componentDidUpdate(oldProps, newProps);
+    const response = this.componentDidUpdate(oldProps, newProps);
     if (!response) {
       return;
     }
@@ -399,7 +399,10 @@ export abstract class Block implements IBlock {
   }
 
   /* eslint no-unused-vars: ["error", { "args": "none" }] */
-  protected componentDidUpdate(oldProps: TPropsObject, newProps: TPropsObject): boolean {
+  protected componentDidUpdate(
+    _oldProps: TPropsObject,
+    _newProps: TPropsObject
+  ): boolean | Promise<boolean | Error> {
     return true;
   }
 

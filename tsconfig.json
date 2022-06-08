@@ -5,9 +5,17 @@
     "noUnusedParameters": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "target": "es2020",
+    "forceConsistentCasingInFileNames": true,
+    "target": "es5",
     "isolatedModules": false,
-    "module": "commonjs",
-
- }
+    "module": "es2020",
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+ },
+ "exclude": [
+    "node_modules",
+    "./test/*.spec.ts"
+  ]
 } 

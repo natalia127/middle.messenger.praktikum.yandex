@@ -1,8 +1,8 @@
 import { apiInstanceYaPracticum } from '../http/http';
 import { EHandsAuth } from './listHands';
 import { TSignUp, TSignIn } from '../typeDate';
-
-export class AuthAPI {
+import { BaseAPI } from './BaseApi';
+export class AuthAPI extends BaseAPI {
   getUser() {
     return apiInstanceYaPracticum.get(EHandsAuth.GETUSER);
   }

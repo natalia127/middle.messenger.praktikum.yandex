@@ -1,8 +1,12 @@
-export function render(query, block) {
-  const root = document.querySelector(query);
-  root.appendChild(block.getContent());
+import { IBlock } from '../block/typeBlock';
 
-  block.dispatchComponentDidMount();
+export function render(query: string, block: IBlock) {
+  const root = document.querySelector(query);
+  if (root) {
+    root.appendChild(block.getContent());
+
+    block.dispatchComponentDidMount();
+  }
 
   return root;
 }

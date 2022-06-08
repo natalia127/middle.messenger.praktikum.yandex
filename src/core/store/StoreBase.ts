@@ -20,12 +20,12 @@ export class Store extends EventBus {
   }
 
   public clear() {
-    Object.keys(state).forEach((key) => {
+    Object.keys(this.state).forEach((key) => {
       this.set(key, null);
     });
   }
 
-  public setLink(path: string, value: unknown) {
+  public setLink(path: string[], value: unknown) {
     setLink(this.state, path, value);
     this.emit(StoreEvents.Updated);
   }

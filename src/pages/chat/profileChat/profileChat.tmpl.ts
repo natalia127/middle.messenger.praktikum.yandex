@@ -1,4 +1,4 @@
-export const getTempl = function (infoUsersChat) {
+export const getTempl = function (infoUsersChat: string) {
   return `<div class="profileChat">
   <div class="profileChat__iconSettings"></div>
   <div class="profileChat__title"> Профиль чата </div>

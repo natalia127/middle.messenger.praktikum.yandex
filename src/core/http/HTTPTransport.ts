@@ -1,3 +1,4 @@
+import { TResponse } from '../typeDate';
 enum EMETHODS {
   GET = 'GET',
   POST ='POST',
@@ -6,6 +7,7 @@ enum EMETHODS {
 }
 
 type possibleMethods = EMETHODS.GET | EMETHODS.POST | EMETHODS.PUT | EMETHODS.DELETE
+type TOptions = Record<string, any>
 
 function queryStringify(data : Document) {
   if (typeof data !== 'object') {
@@ -14,7 +16,7 @@ function queryStringify(data : Document) {
 
   const keys = Object.keys(data);
   return keys.reduce((result, key, index) => {
-    return `${result}${key}=${data[key]}${index < keys.length - 1 ? '&' : ''}`;
+    return `${result}${key}=${data[(key as keyof Document)]}${index < keys.length - 1 ? '&' : ''}`;
   }, '?');
 }
 
@@ -25,19 +27,19 @@ export class HTTPTransport {
     this.baseUrl = baseUrl;
   }
 
-  get = (url: string, options = { timeout: 0 }) => {
+  get = (url: string, options: TOptions = { timeout: 0 }) => {
     return this.request(this.baseUrl + url, { ...options, method: EMETHODS.GET }, options.timeout);
   };
 
-  post = (url: string, options = { timeout: 0 }) => {
+  post = (url: string, options: TOptions = { timeout: 0 }) => {
     return this.request(this.baseUrl + url, { ...options, method: EMETHODS.POST }, options.timeout);
   };
 
-  put = (url: string, options = { timeout: 0 }) => {
+  put = (url: string, options: TOptions = { timeout: 0 }) => {
     return this.request(this.baseUrl + url, { ...options, method: EMETHODS.PUT }, options.timeout);
   };
 
-  delete = (url: string, options = { timeout: 0 }) => {
+  delete = (url: string, options: TOptions = { timeout: 0 }) => {
     return this.request(
       this.baseUrl + url,
       { ...options, method: EMETHODS.DELETE },
@@ -48,10 +50,11 @@ export class HTTPTransport {
 
   request = (
     url: string,
-    options: { headers? : {[key: string]: string},
-    method?: possibleMethods, data?:Document },
+    options: {
+      headers? : Record<string, string>,
+      method?: possibleMethods, data?:Document },
     timeout = 5000
-  ) => {
+  ) : Promise<TResponse>=> {
     let { headers, method, data } = options;
     if (!headers && !(data instanceof FormData)) {
       headers = { ['content-type']: 'application/json' };
@@ -59,6 +62,7 @@ export class HTTPTransport {
 
     return new Promise(function (resolve, reject) {
       if (!method) {
+        // eslint-disable-next-line prefer-promise-reject-errors
         reject('No method');
         return;
       }
@@ -75,6 +79,9 @@ export class HTTPTransport {
       );
       if (headers) {
         Object.keys(headers).forEach(key => {
+          if (!headers) {
+            return;
+          }
           xhr.setRequestHeader(key, headers[key]);
         });
       }

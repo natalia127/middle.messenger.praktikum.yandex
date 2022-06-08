@@ -49,3 +49,8 @@ export type TSignIn = {
   login: string,
   password: string
 }
+
+export type TResponse = {
+  status: number,
+  response: string
+}

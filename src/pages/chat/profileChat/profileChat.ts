@@ -25,8 +25,9 @@ class ProfileChat_ extends Block {
     const infoUsersChat = chatStore.getState().chatsUser[this.props.idChat];
 
     if (infoUsersChat) {
-      usersChat = infoUsersChat.reduce((acc: string, infoUser) => {
+      usersChat = infoUsersChat.reduce((acc_: string, infoUser) => {
         const pathAvatar = infoUser.avatar ? mainUrlForStatic + infoUser.avatar : '';
+        let acc = acc_;
         acc += `
         
         <li class="profileChat__participant">
@@ -36,7 +37,7 @@ class ProfileChat_ extends Block {
             ::srcImg='${pathAvatar}'
           />
           </div>
-          <div>${infoUser.displayName || infoUser.login}</div>
+          <div>${infoUser.display_name || infoUser.login}</div>
         </li>
       `;
         return acc;

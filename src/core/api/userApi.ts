@@ -1,7 +1,9 @@
 import { apiInstanceYaPracticum } from '../http/http';
 import { EHandsUser } from './listHands';
 import { TChangeUser, TChangePassword, TSearchUser } from '../typeDate';
-export class UserAPI {
+import { BaseAPI } from './BaseApi';
+
+export class UserAPI extends BaseAPI {
   changeUser(data: TChangeUser) {
     return apiInstanceYaPracticum.put(EHandsUser.CHANGE_PROFILE, {
       data: JSON.stringify(data)

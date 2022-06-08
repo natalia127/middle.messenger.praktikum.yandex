@@ -3,7 +3,9 @@ import { EHandsChat } from './listHands';
 import {
   TDelUsersChat, TAddChat, TAddUserChat, TDelChat, TChangeAvatarChat
 } from '../typeDate';
-export class ChatAPI {
+import { BaseAPI } from './BaseApi';
+
+export class ChatAPI extends BaseAPI {
   getChats() {
     return apiInstanceYaPracticum.get(EHandsChat.GET_CHATS);
   }
@@ -39,7 +41,7 @@ export class ChatAPI {
   changeAvatar(data: TChangeAvatarChat) {
     const formdata = new FormData();
     formdata.append('avatar', data.file);
-    formdata.append('chatId', data.chatId);
+    formdata.append('chatId', data.chatId.toString());
     return apiInstanceYaPracticum.put('/chats/avatar', {
       data: formdata
     });

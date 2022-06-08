@@ -31,7 +31,7 @@ export class Input extends Block {
           if (this.props.needForwardEmit) {
             let event = new CustomEvent('handlerChangeInput', {
               detail: {
-                value: e.target.value
+                value: (e.target as HTMLInputElement).value
               },
               bubbles: true
             });

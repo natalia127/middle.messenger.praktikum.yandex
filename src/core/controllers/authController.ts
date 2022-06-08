@@ -5,11 +5,18 @@ import { router } from '../router/initRouter';
 import { AuthAPI } from '../api/authApi';
 import { chatController } from './chatController';
 import { TSignUp, TSignIn } from '../typeDate';
+
 class AuthController {
-  authAPI = new AuthAPI();
+  API;
+
+  constructor() {
+    console.log(this);
+
+    this.API = new AuthAPI();
+  }
 
   public signUp(data: TSignUp) {
-    this.authAPI.signUp(data).then((result)=>{
+    this.API.signUp(data).then((result)=>{
       if (result.status === 200) {
         this.authorization();
       } else {
@@ -21,15 +28,17 @@ class AuthController {
   }
 
   signIn(data: TSignIn) {
-    this.authAPI.signIn(data).then((result)=>{
+    console.log(this);
+
+    this.API.signIn(data).then((result)=>{
       const status = result.status;
       const response = result.response;
 
       if (status === 200 && response === 'OK') {
         this.authorization();
       } else {
-        const response = JSON.parse(result.response);
-        authStore.set('errorMessageAuth', response.reason);
+        const r = JSON.parse(result.response);
+        authStore.set('errorMessageAuth', r.reason);
       }
     });
   }
@@ -45,7 +54,7 @@ class AuthController {
   }
 
   public getUser() {
-    return this.authAPI.getUser().then((result) => {
+    return this.API.getUser().then((result) => {
       if (result.status === 200) {
         const data = JSON.parse(result.response);
         Object.entries(data).forEach(([key, value]) => {
@@ -58,7 +67,7 @@ class AuthController {
   }
 
   public logout() {
-    this.authAPI.logout().then((result) => {
+    this.API.logout().then((result) => {
       if (result.status === 200) {
         if (authStore.getState().isAuth) {
           authStore.set('isAuth', false);

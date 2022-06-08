@@ -8,9 +8,7 @@ export function getPropertyCtx(obj: TCtx, path: string, defaultValue: unknown = 
   const keys = path.split('.');
 
   let result: unknown = obj;
-  let lastKey = null;
   keys.forEach((key)=> {
-    lastKey = key;
     result = (result as TCtx)[key];
   });
 

@@ -15,13 +15,12 @@ export type TEventsInner =
 { [key: string]: Function | string,
   selector: string }[];
 
-export type TPropsObject = {
-  [key: string]: any
-}
+export type TPropsObject = Record<string, any>
 export interface IBlock {
   props: TPropsObject,
   methods: TMethods,
   children: TChildren,
+  forseContent(): void,
   init(): void,
   dispatchComponentDidMount(): void,
   componentDidMount(): void,
